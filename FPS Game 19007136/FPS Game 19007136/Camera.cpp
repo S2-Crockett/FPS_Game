@@ -7,8 +7,7 @@
 
 Camera::Camera()
 {
-	bullet.emplace_back(new Cube);
-	bullet.at(0) = std::make_unique<Cube>();
+
 }
 
 void Camera::CreateBuffer(HRESULT hresult, ID3D11Device* dev)
@@ -23,10 +22,6 @@ void Camera::CreateBuffer(HRESULT hresult, ID3D11Device* dev)
 		cube[i].CreateTexture(hresult, dev, L"Image.jpg");
 		floorCube[i].CreateTexture(hresult, dev, L"Image2.jpg");
 	}
-
-
-	bullet.at(0)->CreateBuffer(hresult, dev);
-	bullet.at(0)->CreateTexture(hresult, dev, L"Image.jpg");
 
 	//Camera information
 	camPosition = dx::XMVectorSet(camPos.x, camPos.y, camPos.z, 0.0f);
@@ -54,45 +49,61 @@ void Camera::DrawFloorCube(ID3D11DeviceContext* devcon, float x, float y, float 
 	floorCube[index].DrawCube(devcon, x, y, z, camView, camProjection);
 	floorCube[index].DrawCube(devcon, x, y + 20.0f, z, camView, camProjection);
 
-	bullet.at(0)->DrawCube(devcon, bullet.at(0)->pos.x, bullet.at(0)->pos.y, bullet.at(0)->pos.z, camView, camProjection);
+
 }
 
 
 
-void Camera::Shoot(ID3D11DeviceContext* devcon, double timer)
+void Camera::Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3D11Device* dev)
 {
+	dx::XMFLOAT3 test(0, 0, 0);
 		if (input.shoot)
 		{
 			if (!shot)
 			{
-					bullet.at(index)->rot = rotation.z * 3.157;
-					bullet.at(index)->pos = camPos;
-					shot = true;
-			}
-			dx::XMFLOAT3 test_;
-			dx::XMStoreFloat3(&test_, camTarget);
+				index += 1;
+				bullet.emplace_back(new Cube);
+				bullet.at(index) = std::make_unique<Cube>();
 
-			dx::XMVECTOR _test = { test_.x - camPos.x,
-								 test_.y - camPos.y,
-								 test_.z - camPos.z,0};
-			dx::XMVECTOR direction = dx::XMVectorSet(10.0f, 0.0f, 0.0f, 0.0f);
-			dx::XMVECTOR facing;
 
-			
+				bullet.at(index)->CreateBuffer(hresult, dev);
+				bullet.at(index)->CreateTexture(hresult, dev, L"Image.jpg");
+
+				bullet.at(index)->rot = rotation.z * 3.157;
+				bullet.at(index)->pos = camPos;
 		
-			facing = dx::XMVector3Dot(direction, _test);
-			dx::XMFLOAT3 result;
-			dx::XMStoreFloat3(&result, _test);
+				dx::XMFLOAT3 camForward;
+				dx::XMStoreFloat3(&camForward, camTarget);
+				dx::XMVECTOR direction = { camForward.x - camPos.x,
+									       camForward.y - camPos.y,
+									       camForward.z - camPos.z, 0 };
+	
 
-			bullet.at(index)->pos.x = bullet.at(index)->pos.x + result.x / 2;
-			bullet.at(index)->pos.z = bullet.at(index)->pos.z + result.z / 2;
+				dx::XMStoreFloat3(&result, direction);
+
+				bullet.at(index)->active = true;
+				bullet.at(index)->bulletPos = result;
+				shot = true;
+			}
 		}
 		else
 		{
 			dx::XMVECTOR test;
 			test = dx::XMLoadFloat3(&rotation);
 			dx::XMVector3Normalize(test);
+			shot = false;
 		}
+
+		for (auto& bullets : bullet)
+		{
+			if (bullets->active)
+			{
+				bullets->DrawCube(devcon, bullets->pos.x, bullets->pos.y, bullets->pos.z, camView, camProjection);
+				bullets->pos.x = bullets->pos.x + bullets->bulletPos.x / 2;
+				bullets->pos.z = bullets->pos.z + bullets->bulletPos.z / 2;
+			}
+		}
+
 }
 
 
@@ -131,32 +142,24 @@ void Camera::UpdateCamera(double time, dx::XMFLOAT3 pos_)
 		{
 			if (collidedFront)
 			{
-				//forwardBack.x -= x;
-				//forwardBack.y -= y;
 				forwardBack.z += z;
 				test = dx::XMLoadFloat3(&forwardBack);
 				test = dx::XMVector3Normalize(test);
 			}
 			else if (collidedBack)
 			{
-				//forwardBack.x -= x;
-				//forwardBack.y -= y;
 				forwardBack.z -= z;
 				test = dx::XMLoadFloat3(&forwardBack);
 				test = dx::XMVector3Normalize(test);
 			}
 			else if (collidedRight)
 			{
-				//forwardBack.z -= z;
-				//forwardBack.y -= y;
 				forwardBack.x += x;
 				test = dx::XMLoadFloat3(&forwardBack);
 				test = dx::XMVector3Normalize(test);
 			}
 			else if (collidedLeft)
 			{
-				//forwardBack.z -= z;
-				//forwardBack.y -= y;
 				forwardBack.x -= x;
 				test = dx::XMLoadFloat3(&forwardBack);
 				test = dx::XMVector3Normalize(test);

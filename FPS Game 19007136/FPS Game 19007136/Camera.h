@@ -4,7 +4,7 @@
 #include <dxgi.h>
 #include <DirectXMath.h>
 #include "Inputs.h"
-#include "Cube.h"
+#include "Bullet.h"
 #include <vector>
 #include <algorithm>
 namespace dx = DirectX;
@@ -23,13 +23,14 @@ public:
 	Cube cube[width * height];
 	Cube floorCube[width * height];
 	std::vector<std::unique_ptr<Cube>> bullet;
+	std::vector<std::unique_ptr<Bullet>> bullet_;
 
 	//void CleanUp();
 	void CreateBuffer(HRESULT hresult, ID3D11Device* dev);
 
 	void DrawCube(ID3D11DeviceContext* devcon, float x, float y, float z, int index);
 	void DrawFloorCube(ID3D11DeviceContext* devcon, float x, float y, float z, int index);
-	void Shoot(ID3D11DeviceContext* devcon, double timer);
+	void Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3D11Device* dev);
 	void UpdateCamera(double time, dx::XMFLOAT3 pos_);
 
 	float y;
@@ -64,12 +65,14 @@ private:
 	dx::XMFLOAT3 camTarget_;
 	dx::XMVECTOR camUp;
 
-	int index = 0;
+	int index = -1;
 	bool shot = false;
 	float rot = 0.0f;
 
 	const int Width = 800;
 	const int Height = 600;
 
+
+	dx::XMFLOAT3 result;
 };
 

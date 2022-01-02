@@ -17,8 +17,6 @@ public:
 
 	void DrawCube(ID3D11DeviceContext* devcon, float x, float y, float z,
 				  dx::XMMATRIX camView, dx::XMMATRIX camProjection);
-	void DrawBullet(ID3D11DeviceContext* devcon, float x, float y, float z,
-		dx::XMMATRIX camView, dx::XMMATRIX camProjection);
 	void CreateBuffer(HRESULT hresult, ID3D11Device* dev);
 
 	void CreateTexture(HRESULT hresult, ID3D11Device* dev, const wchar_t* file);
@@ -38,11 +36,13 @@ public:
 	dx::XMFLOAT3 pos;
 	dx::XMFLOAT3 scale = {2.0f, 3.0f, 2.0f};
 
+	dx::XMFLOAT3 bulletPos;
 
 	dx::XMVECTOR position;
 
 	float rot = 0.0f;
 	bool set = false;
+	bool active = false;
 
 	bool collided = false;
 

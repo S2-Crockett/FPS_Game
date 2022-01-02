@@ -196,7 +196,7 @@ void Window::DrawScene(double time)
 	//GFX.camera.SetMatrix(devcon);
 	devcon->IASetIndexBuffer(GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	devcon->IASetVertexBuffers(0, 1, &GFX.vertexBuffer, &GFX.stride, &GFX.offset);
-	GFX.camera.Shoot(devcon, time);
+	GFX.camera.Shoot(devcon, time, hresult, dev);
 	ReadMap();
 	//Present the backbuffer to the screen
 	swapchain->Present(0, 0);
