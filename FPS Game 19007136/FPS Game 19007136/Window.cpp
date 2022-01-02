@@ -309,7 +309,16 @@ int Window::messageloop() {
 						billboard[e].active = false;
 					}
 				}
-
+				for (int i = 0; i < index; i++)
+				{
+					if (bullets->pos.x < GFX.camera.cube[i].pos.x + 3 &&
+						bullets->pos.x > GFX.camera.cube[i].pos.x - 3 &&
+						bullets->pos.z < GFX.camera.cube[i].pos.z + 3 &&
+						bullets->pos.z > GFX.camera.cube[i].pos.z - 3)
+					{
+						bullets->active = false;
+					}
+				}
 
 			}
 
