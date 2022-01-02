@@ -23,6 +23,9 @@ void Camera::CreateBuffer(HRESULT hresult, ID3D11Device* dev)
 		floorCube[i].CreateTexture(hresult, dev, L"Image2.jpg");
 	}
 
+
+
+
 	//Camera information
 	camPosition = dx::XMVectorSet(camPos.x, camPos.y, camPos.z, 0.0f);
 	camTarget = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -142,24 +145,32 @@ void Camera::UpdateCamera(double time, dx::XMFLOAT3 pos_)
 		{
 			if (collidedFront)
 			{
+				//forwardBack.x -= x;
+				//forwardBack.y -= y;
 				forwardBack.z += z;
 				test = dx::XMLoadFloat3(&forwardBack);
 				test = dx::XMVector3Normalize(test);
 			}
 			else if (collidedBack)
 			{
+				//forwardBack.x -= x;
+				//forwardBack.y -= y;
 				forwardBack.z -= z;
 				test = dx::XMLoadFloat3(&forwardBack);
 				test = dx::XMVector3Normalize(test);
 			}
 			else if (collidedRight)
 			{
+				//forwardBack.z -= z;
+				//forwardBack.y -= y;
 				forwardBack.x += x;
 				test = dx::XMLoadFloat3(&forwardBack);
 				test = dx::XMVector3Normalize(test);
 			}
 			else if (collidedLeft)
 			{
+				//forwardBack.z -= z;
+				//forwardBack.y -= y;
 				forwardBack.x -= x;
 				test = dx::XMLoadFloat3(&forwardBack);
 				test = dx::XMVector3Normalize(test);

@@ -228,6 +228,14 @@ void Window::ReadMap()
 			floorIndex++;
 			chr++; 
 		}
+		else if (ch == 'e')
+		{
+			enemyPos[enemies] = make_pair(chr, lines);
+			enemies++;
+			floorPos[floorIndex] = make_pair(chr, lines);
+			floorIndex++;
+			chr++;
+		}
 		else
 		{
 			chr++;
@@ -248,7 +256,15 @@ void Window::ReadMap()
 	}
 	devcon->IASetIndexBuffer(GFX.indexBuffer_, DXGI_FORMAT_R32_UINT, 0);
 	devcon->IASetVertexBuffers(0, 1, &GFX.vertexBuffer_, &GFX.stride, &GFX.offset);
-	GFX.billboard.DrawCube(devcon, 10, 0, -10, GFX.camera.camView, GFX.camera.camProjection);
+
+	for (int e = 0; e < enemies; e++)
+	{
+		if (billboard[e].active)
+		{
+			billboard[e].CreateBuffer(hresult, dev, L"Image1.jpg");
+			billboard[e].DrawCube(devcon, enemyPos[e].first * 4, 3, -enemyPos[e].second * 4, GFX.camera.camView, GFX.camera.camProjection);
+		}
+	}
 }
 
 
@@ -278,13 +294,35 @@ int Window::messageloop() {
 			DrawScene(timer.frameTime);
 			GFX.camera.DetectInput(timer.frameTime, hwnd);
 			UpdateScene();
+
+			for (auto& bullets : GFX.camera.bullet)
+			{
+				for (int e = 0; e < enemies; e++)
+				{
+					if (bullets->pos.x < billboard[e].pos.x + 3 &&
+						bullets->pos.x > billboard[e].pos.x - 3 &&
+						bullets->pos.z < billboard[e].pos.z + 3 &&
+						bullets->pos.z > billboard[e].pos.z - 3 &&
+						billboard[e].active)
+					{
+						bullets->active = false;
+						billboard[e].active = false;
+					}
+				}
+
+
+			}
+
 			for (int i = 0; i < index; i++)
 			{
 				GFX.camera.UpdateCamera(timer.frameTime, GFX.camera.cube[i].pos);
 			}
-			GFX.billboard.UpdateBillboard(timer.frameTime, GFX.camera.camPos);
+			for (int e = 0; e < enemies; e++)
+			{
+				billboard[e].UpdateBillboard(timer.frameTime, GFX.camera.camPos);
+			}
 
-
+			
 		}
 	}
 	return msg.wParam;

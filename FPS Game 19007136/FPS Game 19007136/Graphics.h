@@ -24,7 +24,6 @@ public:
 	const int Height = 600;
 
 	Camera camera;
-	BillBoard billboard;
 	ID3D11Buffer* vertexBuffer, * indexBuffer, * vertexBuffer_, * indexBuffer_;
 	UINT stride;
 	UINT offset;

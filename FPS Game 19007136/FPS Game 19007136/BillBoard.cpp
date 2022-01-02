@@ -1,4 +1,6 @@
 #include "BillBoard.h"
+#include <string>
+#include <iostream>
 
 #pragma comment(lib, "d3d11.lib")
 
@@ -40,12 +42,11 @@ void BillBoard::UpdateBillboard(double time, dx::XMFLOAT3 camPos)
 	Rotation = dx::XMMatrixRotationY(rotation_);
 	Translation = dx::XMMatrixTranslation(pos.x, pos.y, pos.z);
 	Scale = dx::XMMatrixScaling(scale.x, 6.0f, scale.z);
-
-	//Set cube1's world space using the transformations
+	
 	cube1World = Scale * Rotation * Translation;
 }
 
-void BillBoard::CreateBuffer(HRESULT hresult, ID3D11Device* dev)
+void BillBoard::CreateBuffer(HRESULT hresult, ID3D11Device* dev, const wchar_t* file)
 {
 	D3D11_BUFFER_DESC cbbd;
 	ZeroMemory(&cbbd, sizeof(D3D11_BUFFER_DESC));
@@ -57,10 +58,7 @@ void BillBoard::CreateBuffer(HRESULT hresult, ID3D11Device* dev)
 	cbbd.MiscFlags = 0;
 
 	hresult = dev->CreateBuffer(&cbbd, NULL, &cbPerObjectBuffer);
-}
 
-void BillBoard::CreateTexture(HRESULT hresult, ID3D11Device* dev, const wchar_t* file)
-{
 	dx::ScratchImage image_data;
 	hresult = dx::LoadFromWICFile(file, dx::WIC_FLAGS_NONE, nullptr, image_data);
 
@@ -74,4 +72,6 @@ void BillBoard::CreateTexture(HRESULT hresult, ID3D11Device* dev, const wchar_t*
 
 	dev->CreateShaderResourceView(m_texture, &desc, &CubesTexture);
 }
+
+
 

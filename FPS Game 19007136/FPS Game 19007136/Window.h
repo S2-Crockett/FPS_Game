@@ -50,11 +50,16 @@ public:
 
 	int index = 0;
 	int floorIndex = 0;
+	int enemies = 0;
 	
-	std::pair<int, int> wallPos[width * height];
+	std::pair<int, int> wallPos[width * height * 3];
 	std::pair<int, int> floorPos[width * height];
+	std::pair<int, int> enemyPos[width * height];
 
 	Timer timer;
+	//std::vector<std::unique_ptr<BillBoard>> billboard;
+	//BillBoard billboard;
+	BillBoard billboard[3];
 
 
 private:
@@ -71,7 +76,6 @@ private:
 	HRESULT hresult;
 
 	Graphics GFX;
-
 	Cube cube;
 
 

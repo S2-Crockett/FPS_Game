@@ -15,9 +15,7 @@ public:
 
 	void UpdateBillboard(double time, dx::XMFLOAT3 camPos);
 
-	void CreateBuffer(HRESULT hresult, ID3D11Device* dev);
-
-	void CreateTexture(HRESULT hresult, ID3D11Device* dev, const wchar_t* file);
+	void CreateBuffer(HRESULT hresult, ID3D11Device* dev, const wchar_t* file);
 
 	ID3D11ShaderResourceView* CubesTexture;
 	ID3D11Resource* m_texture;
@@ -38,5 +36,7 @@ public:
 	dx::XMVECTOR position;
 
 	float rot = 0.0f;
+
+	bool active = true;
 };
 

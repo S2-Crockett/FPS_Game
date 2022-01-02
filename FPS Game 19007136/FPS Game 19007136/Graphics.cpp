@@ -225,8 +225,4 @@ void Graphics::CreateShaders(HRESULT hresult, ID3D11Device* dev,
 	devcon->RSSetViewports(1, &viewport);
 
 	camera.CreateBuffer(hresult, dev);
-	billboard.CreateBuffer(hresult, dev);
-	billboard.CreateTexture(hresult, dev, L"Image1.jpg");
-
-
 }
