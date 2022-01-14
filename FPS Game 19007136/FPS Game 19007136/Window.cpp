@@ -136,8 +136,6 @@ void Window::CleanUp()
 	depthStencilBuffer->Release();
 }
 
-
-
 bool Window::InitScene()
 {
 	game.GFX.CreateShaders(hresult, dev, devcon);
@@ -152,45 +150,10 @@ void Window::InitDirectInput(HINSTANCE hInstance)
 	game.camera.InitDirectInput(hInstance, hresult, hwnd);
 }
 
-
-void Window::Collision(std::vector<bool> &collidedFront, bool &collided)
-{
-	if (std::all_of(std::begin(collidedFront), std::end(collidedFront), [](bool i) {return !i; }))
-	{
-		collided = false;
-	}
-	for (int j = 0; j < collidedFront.size(); j++)
-	{
-		if (collidedFront.at(j) == true)
-		{
-			collidedFront.at(j) = false;
-		}
-	}
-}
-
-void Window::UpdateScene()
-{
-	Collision(collidedFront, game.camera.collidedFront);
-	Collision(collidedBack, game.camera.collidedBack);
-	Collision(collidedLeft, game.camera.collidedLeft);
-	Collision(collidedRight, game.camera.collidedRight);
-	for (int i = 0; i < index; i++)
-	{
-		if (game.camera.Intersecting(game.camera.cube[i].pos, game.camera.cube[i].scale))
-		{
-			game.camera.Resolve(game.camera.cube[i].pos, game.camera.cube[i].scale, collidedFront, collidedBack, collidedLeft, collidedRight, i);
-		}
-	}
-}
-
 void Window::DrawScene(double time)
 {
 
 	//Clear our backbuffer to the updated color
-
-
-	//Present the backbuffer to the screen
-	swapchain->Present(0, 0);
 
 	const float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
@@ -202,8 +165,10 @@ void Window::DrawScene(double time)
 	devcon->IASetVertexBuffers(0, 1, &game.GFX.vertexBuffer, &game.GFX.stride, &game.GFX.offset);
 
 	ReadMap();
-}
 
+	//Present the backbuffer to the screen
+	swapchain->Present(0, 0);
+}
 
 void Window::ReadMap()
 {
@@ -268,7 +233,6 @@ void Window::ReadMap()
 	}
 }
 
-
 int Window::messageloop() {
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
@@ -292,8 +256,6 @@ int Window::messageloop() {
 		else {
 			game.Update(enemies, index);
 			DrawScene(game.timer.frameTime);
-			UpdateScene();
-
 		}
 	}
 	return msg.wParam;

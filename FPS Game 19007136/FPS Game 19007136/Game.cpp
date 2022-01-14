@@ -5,8 +5,9 @@
 
 
 
-void Game::Update(int enemies, int index)
+void Game::Update(int enemies, int& index_)
 {
+	index = index_;
 	timer.RunTimer();
 	camera.Shoot(devcon, timer.frameTime, hresult, dev);
 	camera.DetectInput(timer.frameTime, hwnd);
@@ -23,7 +24,7 @@ void Game::Update(int enemies, int index)
 				enemiesDead += 1;
 			}
 		}
-		for (int i = 0; i < index; i++)
+		for (int i = 0; i < index_; i++)
 		{
 			if (Collision(bullets->pos, camera.cube[i].pos))
 			{
@@ -37,7 +38,7 @@ void Game::Update(int enemies, int index)
 		DestroyWindow(hwnd);
 	}
 
-	for (int i = 0; i < index; i++)
+	for (int i = 0; i < index_; i++)
 	{
 		camera.UpdateCamera(timer.frameTime, camera.cube[i].pos);
 	}
@@ -45,6 +46,7 @@ void Game::Update(int enemies, int index)
 	{
 		billboard[e].UpdateBillboard(timer.frameTime, camera.camPos);
 	}
+	UpdateScene();
 }
 
 bool Game::Collision(dx::XMFLOAT3 bullet, dx::XMFLOAT3 target)
@@ -58,6 +60,40 @@ bool Game::Collision(dx::XMFLOAT3 bullet, dx::XMFLOAT3 target)
 void Game::DrawScene()
 {
 }
+
+
+void Game::WallCollision(std::vector<bool>& collidedFront, bool& collided)
+{
+	if (std::all_of(std::begin(collidedFront), std::end(collidedFront), [](bool i) {return !i; }))
+	{
+		collided = false;
+	}
+	for (int j = 0; j < collidedFront.size(); j++)
+	{
+		if (collidedFront.at(j) == true)
+		{
+			collidedFront.at(j) = false;
+		}
+	}
+}
+
+void Game::UpdateScene()
+{
+	WallCollision(collidedFront, camera.collidedFront);
+	WallCollision(collidedBack, camera.collidedBack);
+	WallCollision(collidedLeft, camera.collidedLeft);
+	WallCollision(collidedRight, camera.collidedRight);
+	for (int i = 0; i < index; i++)
+	{
+		if (camera.Intersecting(camera.cube[i].pos, camera.cube[i].scale))
+		{
+			camera.Resolve(camera.cube[i].pos, camera.cube[i].scale, collidedFront, collidedBack, collidedLeft, collidedRight, i);
+		}
+	}
+}
+
+
+
 
 void Game::CreateBuffer(HRESULT& hresult_, ID3D11Device*& dev_, ID3D11DeviceContext*& devcon_, HWND& hwnd_)
 {

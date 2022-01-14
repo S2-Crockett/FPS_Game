@@ -19,7 +19,6 @@ public:
 	bool InitializeDirect3d11App(HINSTANCE hInstance);
 	void CleanUp();
 	bool InitScene();
-	void UpdateScene();
 	void DrawScene(double time);
 	int messageloop();
 	bool InitializeWindow(HINSTANCE hInstance,
@@ -29,7 +28,6 @@ public:
 	void InitDirectInput(HINSTANCE hInstance);
 	void ReadMap();
 
-	void Collision(std::vector<bool> &collidedFront, bool &collided);
 
 
 	const int Width = 800;
@@ -38,7 +36,6 @@ public:
 
 	bool draw = true;
 
-	std::vector<bool> collidedFront, collidedBack, collidedLeft, collidedRight;
 
 	static const int width = 20;
 	static const int height = 20;
