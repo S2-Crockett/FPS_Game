@@ -141,7 +141,7 @@ void Window::CleanUp()
 bool Window::InitScene()
 {
 	game.GFX.CreateShaders(hresult, dev, devcon);
-	game.CreateBuffer(hresult, dev, devcon);
+	game.CreateBuffer(hresult, dev, devcon, hwnd);
 	cube.CreateBuffer(hresult, dev);
 	cube.CreateTexture(hresult, dev, L"Image.jpg");
 	return true;
@@ -290,53 +290,10 @@ int Window::messageloop() {
 			DispatchMessage(&msg);
 		}
 		else {
-			game.Update();
+			game.Update(enemies, index);
 			DrawScene(game.timer.frameTime);
-			game.camera.DetectInput(game.timer.frameTime, hwnd);
 			UpdateScene();
 
-			for (auto& bullets : game.camera.bullet)
-			{
-				for (int e = 0; e < enemies; e++)
-				{
-					if (bullets->pos.x < game.billboard[e].pos.x + 3 &&
-						bullets->pos.x > game.billboard[e].pos.x - 3 &&
-						bullets->pos.z < game.billboard[e].pos.z + 3 &&
-						bullets->pos.z > game.billboard[e].pos.z - 3 &&
-						game.billboard[e].active)
-					{
-						bullets->active = false;
-						game.billboard[e].active = false;
-						enemiesDead += 1;
-					}
-				}
-				for (int i = 0; i < index; i++)
-				{
-					if (bullets->pos.x < game.camera.cube[i].pos.x + 3 &&
-						bullets->pos.x > game.camera.cube[i].pos.x - 3 &&
-						bullets->pos.z < game.camera.cube[i].pos.z + 3 &&
-						bullets->pos.z > game.camera.cube[i].pos.z - 3)
-					{
-						bullets->active = false;
-					}
-				}
-			}
-
-			if (enemiesDead == sizeof(game.billboard) / sizeof(*game.billboard))
-			{
-				DestroyWindow(hwnd);
-			}
-
-			for (int i = 0; i < index; i++)
-			{
-				game.camera.UpdateCamera(game.timer.frameTime, game.camera.cube[i].pos);
-			}
-			for (int e = 0; e < enemies; e++)
-			{
-				game.billboard[e].UpdateBillboard(game.timer.frameTime, game.camera.camPos);
-			}
-
-			
 		}
 	}
 	return msg.wParam;

@@ -83,7 +83,6 @@ private:
 	int lines = 1.0f;
 	int chr = 0.0f;
 
-
 	bool test = true;
 	dx::XMFLOAT3 Pos;
 
