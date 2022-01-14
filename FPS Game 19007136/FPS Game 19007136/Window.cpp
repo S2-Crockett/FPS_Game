@@ -56,7 +56,6 @@ bool Window::InitializeWindow(HINSTANCE hInstance,
 
 	return true;
 }
-
 bool Window::InitializeDirect3d11App(HINSTANCE hInstance)
 {
 	//Describe our SwapChain Buffer
@@ -131,7 +130,7 @@ void Window::CleanUp()
 	devcon->Release();
 	backbuffer->Release();
 
-	GFX.CleanUp();
+	game.GFX.CleanUp();
 
 	depthStencilView->Release();
 	depthStencilBuffer->Release();
@@ -141,7 +140,8 @@ void Window::CleanUp()
 
 bool Window::InitScene()
 {
-	GFX.CreateShaders(hresult, dev, devcon);
+	game.GFX.CreateShaders(hresult, dev, devcon);
+	game.CreateBuffer(hresult, dev, devcon);
 	cube.CreateBuffer(hresult, dev);
 	cube.CreateTexture(hresult, dev, L"Image.jpg");
 	return true;
@@ -149,7 +149,7 @@ bool Window::InitScene()
 
 void Window::InitDirectInput(HINSTANCE hInstance)
 {
-	GFX.camera.InitDirectInput(hInstance, hresult, hwnd);
+	game.camera.InitDirectInput(hInstance, hresult, hwnd);
 }
 
 
@@ -168,37 +168,40 @@ void Window::Collision(std::vector<bool> &collidedFront, bool &collided)
 	}
 }
 
-
 void Window::UpdateScene()
 {
-	Collision(collidedFront, GFX.camera.collidedFront);
-	Collision(collidedBack, GFX.camera.collidedBack);
-	Collision(collidedLeft, GFX.camera.collidedLeft);
-	Collision(collidedRight, GFX.camera.collidedRight);
+	Collision(collidedFront, game.camera.collidedFront);
+	Collision(collidedBack, game.camera.collidedBack);
+	Collision(collidedLeft, game.camera.collidedLeft);
+	Collision(collidedRight, game.camera.collidedRight);
 	for (int i = 0; i < index; i++)
 	{
-		if (GFX.camera.Intersecting(GFX.camera.cube[i].pos, GFX.camera.cube[i].scale))
+		if (game.camera.Intersecting(game.camera.cube[i].pos, game.camera.cube[i].scale))
 		{
-			GFX.camera.Resolve(GFX.camera.cube[i].pos, GFX.camera.cube[i].scale, collidedFront, collidedBack, collidedLeft, collidedRight, i);
+			game.camera.Resolve(game.camera.cube[i].pos, game.camera.cube[i].scale, collidedFront, collidedBack, collidedLeft, collidedRight, i);
 		}
 	}
 }
 
 void Window::DrawScene(double time)
 {
+
 	//Clear our backbuffer to the updated color
+
+
+	//Present the backbuffer to the screen
+	swapchain->Present(0, 0);
+
 	const float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	devcon->ClearRenderTargetView(backbuffer, bgColor);
 	devcon->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	//GFX.camera.SetMatrix(devcon);
-	devcon->IASetIndexBuffer(GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	devcon->IASetVertexBuffers(0, 1, &GFX.vertexBuffer, &GFX.stride, &GFX.offset);
-	GFX.camera.Shoot(devcon, time, hresult, dev);
+
+	devcon->IASetIndexBuffer(game.GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	devcon->IASetVertexBuffers(0, 1, &game.GFX.vertexBuffer, &game.GFX.stride, &game.GFX.offset);
+
 	ReadMap();
-	//Present the backbuffer to the screen
-	swapchain->Present(0, 0);
 }
 
 
@@ -239,9 +242,9 @@ void Window::ReadMap()
 	}
 	for (int i = 0; i < index; i++)
 	{		
-		devcon->IASetIndexBuffer(GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		devcon->IASetVertexBuffers(0, 1, &GFX.vertexBuffer, &GFX.stride, &GFX.offset);
-		GFX.camera.DrawCube(devcon, wallPos[i].first * 4, 0, -wallPos[i].second * 4, i);
+		devcon->IASetIndexBuffer(game.GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		devcon->IASetVertexBuffers(0, 1, &game.GFX.vertexBuffer, &game.GFX.stride, &game.GFX.offset);
+		game.camera.DrawCube(devcon, wallPos[i].first * 4, 0, -wallPos[i].second * 4, i);
 	}
 
 	if (test)
@@ -249,18 +252,18 @@ void Window::ReadMap()
 		Pos = dx::XMFLOAT3(startPos.first * 4, 3.0f, -startPos.second * 4);
 		dx::XMVECTOR PosVector;
 		PosVector = dx::XMLoadFloat3(&Pos);
-		GFX.camera.camPosition = PosVector;
+		game.camera.camPosition = PosVector;
 		test = false;
 	}
 
-	GFX.camera.DrawFloorCube(devcon, GFX.camera.floorCube.scale.x + 2, -5, -GFX.camera.floorCube.scale.z - 18, 0);
+	game.camera.DrawFloorCube(devcon, game.camera.floorCube.scale.x + 2, -5, -game.camera.floorCube.scale.z - 18, 0);
 
 	for (int e = 0; e < enemies; e++)
 	{
-		if (billboard[e].active)
+		if (game.billboard[e].active)
 		{
-			billboard[e].CreateBuffer(hresult, dev, L"Image1.jpg");
-			billboard[e].DrawCube(devcon, enemyPos[e].first * 4, 3, -enemyPos[e].second * 4, GFX.camera.camView, GFX.camera.camProjection);
+			game.billboard[e].CreateBuffer(hresult, dev, L"Image1.jpg");
+			game.billboard[e].DrawCube(devcon, enemyPos[e].first * 4, 3, -enemyPos[e].second * 4, game.camera.camView, game.camera.camProjection);
 		}
 	}
 }
@@ -287,58 +290,50 @@ int Window::messageloop() {
 			DispatchMessage(&msg);
 		}
 		else {
-
-			timer.RunTimer();
-			DrawScene(timer.frameTime);
-			GFX.camera.DetectInput(timer.frameTime, hwnd);
+			game.Update();
+			DrawScene(game.timer.frameTime);
+			game.camera.DetectInput(game.timer.frameTime, hwnd);
 			UpdateScene();
 
-			for (auto& bullets : GFX.camera.bullet)
+			for (auto& bullets : game.camera.bullet)
 			{
 				for (int e = 0; e < enemies; e++)
 				{
-					if (bullets->pos.x < billboard[e].pos.x + 3 &&
-						bullets->pos.x > billboard[e].pos.x - 3 &&
-						bullets->pos.z < billboard[e].pos.z + 3 &&
-						bullets->pos.z > billboard[e].pos.z - 3 &&
-						billboard[e].active)
+					if (bullets->pos.x < game.billboard[e].pos.x + 3 &&
+						bullets->pos.x > game.billboard[e].pos.x - 3 &&
+						bullets->pos.z < game.billboard[e].pos.z + 3 &&
+						bullets->pos.z > game.billboard[e].pos.z - 3 &&
+						game.billboard[e].active)
 					{
 						bullets->active = false;
-						billboard[e].active = false;
+						game.billboard[e].active = false;
 						enemiesDead += 1;
-
-						OutputDebugStringA(to_string(enemiesDead).c_str());
-						OutputDebugStringA("\n");
-						OutputDebugStringA(to_string(sizeof(billboard)/sizeof(*billboard)).c_str());
-						OutputDebugStringA("\n");
 					}
 				}
 				for (int i = 0; i < index; i++)
 				{
-					if (bullets->pos.x < GFX.camera.cube[i].pos.x + 3 &&
-						bullets->pos.x > GFX.camera.cube[i].pos.x - 3 &&
-						bullets->pos.z < GFX.camera.cube[i].pos.z + 3 &&
-						bullets->pos.z > GFX.camera.cube[i].pos.z - 3)
+					if (bullets->pos.x < game.camera.cube[i].pos.x + 3 &&
+						bullets->pos.x > game.camera.cube[i].pos.x - 3 &&
+						bullets->pos.z < game.camera.cube[i].pos.z + 3 &&
+						bullets->pos.z > game.camera.cube[i].pos.z - 3)
 					{
 						bullets->active = false;
 					}
 				}
-
 			}
 
-			if (enemiesDead == sizeof(billboard) / sizeof(*billboard))
+			if (enemiesDead == sizeof(game.billboard) / sizeof(*game.billboard))
 			{
-				OutputDebugStringA("ALL DEAD");
 				DestroyWindow(hwnd);
 			}
 
 			for (int i = 0; i < index; i++)
 			{
-				GFX.camera.UpdateCamera(timer.frameTime, GFX.camera.cube[i].pos);
+				game.camera.UpdateCamera(game.timer.frameTime, game.camera.cube[i].pos);
 			}
 			for (int e = 0; e < enemies; e++)
 			{
-				billboard[e].UpdateBillboard(timer.frameTime, GFX.camera.camPos);
+				game.billboard[e].UpdateBillboard(game.timer.frameTime, game.camera.camPos);
 			}
 
 			

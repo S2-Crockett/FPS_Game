@@ -1,5 +1,5 @@
 #pragma once
-#include "Camera.h"
+
 #include "BillBoard.h"
 
 #include <d3d11.h>
@@ -23,7 +23,6 @@ public:
 	const int Width = 800;
 	const int Height = 600;
 
-	Camera camera;
 	ID3D11Buffer* vertexBuffer, * indexBuffer, * vertexBuffer_, * indexBuffer_;
 	UINT stride;
 	UINT offset;

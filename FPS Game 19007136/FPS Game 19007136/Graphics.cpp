@@ -223,6 +223,4 @@ void Graphics::CreateShaders(HRESULT hresult, ID3D11Device* dev,
 
 	//Set the Viewport
 	devcon->RSSetViewports(1, &viewport);
-
-	camera.CreateBuffer(hresult, dev);
 }

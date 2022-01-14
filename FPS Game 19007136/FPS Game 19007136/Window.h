@@ -1,7 +1,6 @@
 #pragma once
 #include <Windows.h>
-#include "Graphics.h"
-#include "Timer.h"
+#include "Game.h"
 #include <dxgi.h>
 #include <DirectXMath.h>
 #include <fstream>
@@ -28,6 +27,7 @@ public:
 		int width, int height,
 		bool windowed);
 	void InitDirectInput(HINSTANCE hInstance);
+	void ReadMap();
 
 	void Collision(std::vector<bool> &collidedFront, bool &collided);
 
@@ -35,11 +35,6 @@ public:
 	const int Width = 800;
 	const int Height = 600;
 
-	void ReadMap();
-	fstream indata;
-	char ch;
-	int lines = 1.0f;
-	int chr = 0.0f;
 
 	bool draw = true;
 
@@ -57,10 +52,8 @@ public:
 	std::pair<int, int> enemyPos[width * height];
 	std::pair<int, int> startPos;
 
-	Timer timer;
 	//std::vector<std::unique_ptr<BillBoard>> billboard;
 	//BillBoard billboard;
-	BillBoard billboard[2];
 
 
 private:
@@ -71,17 +64,31 @@ private:
 	ID3D11RenderTargetView* backbuffer;
 	ID3D11DepthStencilView* depthStencilView;
 	ID3D11Texture2D* depthStencilBuffer;
-
+	
 	LPCTSTR WndClassName = L"FPS Game";
 	HWND hwnd = NULL;
 	HRESULT hresult;
 
-	Graphics GFX;
 	Cube cube;
+
+
+	int enemiesDead = 0;
+
+
+	Game game;
+
+
+	fstream indata;
+	char ch;
+	int lines = 1.0f;
+	int chr = 0.0f;
+
 
 	bool test = true;
 	dx::XMFLOAT3 Pos;
 
-	int enemiesDead = 0;
+
 };
+
+
 
