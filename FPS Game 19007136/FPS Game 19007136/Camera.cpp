@@ -15,13 +15,14 @@ void Camera::CreateBuffer(HRESULT hresult, ID3D11Device* dev)
 	for (int i = 0; i < width * height; i++)
 	{
 		cube[i].CreateBuffer(hresult, dev);
-		floorCube[i].CreateBuffer(hresult, dev);
 	}
 	for (int i = 0; i < width * height; i++)
 	{
 		cube[i].CreateTexture(hresult, dev, L"Image.jpg");
-		floorCube[i].CreateTexture(hresult, dev, L"Image2.jpg");
 	}
+
+	floorCube.CreateBuffer(hresult, dev);
+	floorCube.CreateTexture(hresult, dev, L"Image2.jpg");
 
 
 
@@ -43,16 +44,16 @@ void Camera::CreateBuffer(HRESULT hresult, ID3D11Device* dev)
 
 void Camera::DrawCube(ID3D11DeviceContext* devcon, float x, float y, float z, int index)
 {
-	cube[index].DrawCube(devcon, x, y, z, camView, camProjection);
-	cube[index].DrawCube(devcon, x, y + 5.0f, z, camView, camProjection);
-	cube[index].DrawCube(devcon, x, y + 10.0f, z, camView, camProjection);
+	dx::XMFLOAT3 Scale(2, 8, 2);
+	cube[index].scale = Scale;
+	cube[index].DrawCube(devcon, x, y + 5, z, camView, camProjection);
 }
 void Camera::DrawFloorCube(ID3D11DeviceContext* devcon, float x, float y, float z, int index)
 {
-	floorCube[index].DrawCube(devcon, x, y, z, camView, camProjection);
-	floorCube[index].DrawCube(devcon, x, y + 20.0f, z, camView, camProjection);
-
-
+	dx::XMFLOAT3 Scale(150, 2, 50);
+	floorCube.scale = Scale;
+	floorCube.DrawCube(devcon, x, y, z, camView, camProjection);
+	floorCube.DrawCube(devcon, x, y + 20.0f, z, camView, camProjection);
 }
 
 
@@ -180,7 +181,7 @@ void Camera::UpdateCamera(double time, dx::XMFLOAT3 pos_)
 		else
 		{
 			camPosition = dx::XMVectorAdd(camPosition, dx::XMVectorMultiply(input.moveBackForward, input.camForward));
-			camPosition = dx::XMVectorAdd(camPosition, dx::XMVectorMultiply(input.moveLeftRight, input.camRight));
+			//camPosition = dx::XMVectorAdd(camPosition, dx::XMVectorMultiply(input.moveLeftRight, input.camRight));
 		}
 		
 

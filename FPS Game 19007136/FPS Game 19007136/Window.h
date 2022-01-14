@@ -55,11 +55,12 @@ public:
 	std::pair<int, int> wallPos[width * height * 3];
 	std::pair<int, int> floorPos[width * height];
 	std::pair<int, int> enemyPos[width * height];
+	std::pair<int, int> startPos;
 
 	Timer timer;
 	//std::vector<std::unique_ptr<BillBoard>> billboard;
 	//BillBoard billboard;
-	BillBoard billboard[3];
+	BillBoard billboard[6];
 
 
 private:
@@ -78,6 +79,7 @@ private:
 	Graphics GFX;
 	Cube cube;
 
-
+	bool test = true;
+	dx::XMFLOAT3 Pos;
 };
 

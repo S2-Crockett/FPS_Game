@@ -222,18 +222,15 @@ void Window::ReadMap()
 			index++;
 			chr++;
 		}
-		else if (ch == '~')
-		{
-			floorPos[floorIndex] = make_pair(chr, lines);
-			floorIndex++;
-			chr++; 
-		}
 		else if (ch == 'e')
 		{
 			enemyPos[enemies] = make_pair(chr, lines);
 			enemies++;
-			floorPos[floorIndex] = make_pair(chr, lines);
-			floorIndex++;
+			chr++;
+		}
+		else if (ch == 's')
+		{
+			startPos = make_pair(chr, lines);
 			chr++;
 		}
 		else
@@ -248,14 +245,17 @@ void Window::ReadMap()
 		devcon->IASetVertexBuffers(0, 1, &GFX.vertexBuffer, &GFX.stride, &GFX.offset);
 		GFX.camera.DrawCube(devcon, wallPos[i].first * 4, 0, -wallPos[i].second * 4, i);
 	}
-	for (int f = 0; f < floorIndex; f++)
+
+	if (test)
 	{
-		devcon->IASetIndexBuffer(GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		devcon->IASetVertexBuffers(0, 1, &GFX.vertexBuffer, &GFX.stride, &GFX.offset);
-		GFX.camera.DrawFloorCube(devcon, floorPos[f].first * 4, -5.0f, -floorPos[f].second * 4, f);
+		Pos = dx::XMFLOAT3(startPos.first * 4, 3.0f, -startPos.second * 4);
+		dx::XMVECTOR PosVector;
+		PosVector = dx::XMLoadFloat3(&Pos);
+		GFX.camera.camPosition = PosVector;
+		test = false;
 	}
-	devcon->IASetIndexBuffer(GFX.indexBuffer_, DXGI_FORMAT_R32_UINT, 0);
-	devcon->IASetVertexBuffers(0, 1, &GFX.vertexBuffer_, &GFX.stride, &GFX.offset);
+
+	GFX.camera.DrawFloorCube(devcon, GFX.camera.floorCube.scale.x + 2, -5, -GFX.camera.floorCube.scale.z - 18, 0);
 
 	for (int e = 0; e < enemies; e++)
 	{

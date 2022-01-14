@@ -21,7 +21,7 @@ public:
 	static const int width = 20;
 	static const int height = 20;
 	Cube cube[width * height];
-	Cube floorCube[width * height];
+	Cube floorCube;
 	std::vector<std::unique_ptr<Cube>> bullet;
 	std::vector<std::unique_ptr<Bullet>> bullet_;
 
@@ -41,7 +41,7 @@ public:
 	void InitDirectInput(HINSTANCE hInstance, HRESULT hresult, HWND hwnd);
 	void DetectInput(double time, HWND hwnd);
 
-	dx::XMFLOAT3 camPos = { 0.0f, 3.0f, -8.0f };
+	dx::XMFLOAT3 camPos = { 30.0f, 3.0f, -30.0f };
 	dx::XMFLOAT3 scale = { 2.0f, 2.0f, 2.0f };
 	dx::XMFLOAT3 rotation;
 	dx::XMMATRIX rotation_;
