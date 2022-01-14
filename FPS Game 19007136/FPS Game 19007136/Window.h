@@ -60,7 +60,7 @@ public:
 	Timer timer;
 	//std::vector<std::unique_ptr<BillBoard>> billboard;
 	//BillBoard billboard;
-	BillBoard billboard[6];
+	BillBoard billboard[2];
 
 
 private:
@@ -81,5 +81,7 @@ private:
 
 	bool test = true;
 	dx::XMFLOAT3 Pos;
+
+	int enemiesDead = 0;
 };
 

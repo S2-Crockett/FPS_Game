@@ -123,7 +123,6 @@ bool Window::InitializeDirect3d11App(HINSTANCE hInstance)
 
 	return true;
 }
-
 void Window::CleanUp()
 {
 	//Release the COM Objects we created
@@ -208,7 +207,6 @@ void Window::ReadMap()
 	indata.open("Map.txt");
 	indata.get(ch);
 
-	
 	while (indata)
 	{
 		if (ch == '\n')
@@ -307,6 +305,12 @@ int Window::messageloop() {
 					{
 						bullets->active = false;
 						billboard[e].active = false;
+						enemiesDead += 1;
+
+						OutputDebugStringA(to_string(enemiesDead).c_str());
+						OutputDebugStringA("\n");
+						OutputDebugStringA(to_string(sizeof(billboard)/sizeof(*billboard)).c_str());
+						OutputDebugStringA("\n");
 					}
 				}
 				for (int i = 0; i < index; i++)
@@ -320,6 +324,12 @@ int Window::messageloop() {
 					}
 				}
 
+			}
+
+			if (enemiesDead == sizeof(billboard) / sizeof(*billboard))
+			{
+				OutputDebugStringA("ALL DEAD");
+				DestroyWindow(hwnd);
 			}
 
 			for (int i = 0; i < index; i++)
