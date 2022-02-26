@@ -9,7 +9,10 @@ void Game::Update(int enemies, int& index_)
 {
 	index = index_;
 	timer.RunTimer();
-	camera.Shoot(devcon, timer.frameTime, hresult, dev);
+
+	devcon->IASetIndexBuffer(GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	devcon->IASetVertexBuffers(0, 1, &GFX.vertexBuffer, &GFX.stride, &GFX.offset);
+
 	camera.DetectInput(timer.frameTime, hwnd);
 
 	for (auto& bullets : camera.bullet)
@@ -59,6 +62,7 @@ bool Game::Collision(dx::XMFLOAT3 bullet, dx::XMFLOAT3 target)
 
 void Game::DrawScene()
 {
+	camera.Shoot(devcon, timer.frameTime, hresult, dev);
 }
 
 

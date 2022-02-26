@@ -3,6 +3,8 @@
 #include <iostream>
 
 
+
+
 #pragma comment(lib, "d3d11.lib")
 
 Camera::Camera()
@@ -60,54 +62,24 @@ void Camera::DrawFloorCube(ID3D11DeviceContext* devcon, float x, float y, float 
 
 void Camera::Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3D11Device* dev)
 {
+
 	dx::XMFLOAT3 test(0, 0, 0);
 		if (input.shoot)
 		{
-			if (!shot)
-			{
-				index += 1;
-				bullet.emplace_back(new Cube);
-				bullet.at(index) = std::make_unique<Cube>();
-
-
-				bullet.at(index)->CreateBuffer(hresult, dev);
-				bullet.at(index)->CreateTexture(hresult, dev, L"Image.jpg");
-
-				bullet.at(index)->rot = rotation.z * 3.157;
-				bullet.at(index)->pos = camPos;
-		
-				dx::XMFLOAT3 camForward;
-				dx::XMStoreFloat3(&camForward, camTarget);
-				dx::XMVECTOR direction = { camForward.x - camPos.x,
-									       camForward.y - camPos.y,
-									       camForward.z - camPos.z, 0 };
-	
-
-				dx::XMStoreFloat3(&result, direction);
-
-				bullet.at(index)->active = true;
-				bullet.at(index)->bulletPos = result;
-				shot = true;
-			}
-		}
-		else
-		{
-			dx::XMVECTOR test;
-			test = dx::XMLoadFloat3(&rotation);
-			dx::XMVector3Normalize(test);
-			shot = false;
+				index++;
+				bullet_.emplace_back(new Bullet);
+				bullet_.at(index) = std::make_unique<Bullet>();
+				bullet_.at(index)->Shoot(devcon, timer, hresult, dev, input, camView, camProjection, rotation, camPos, camTarget);
 		}
 
-		for (auto& bullets : bullet)
+
+		for (auto& bullets : bullet_)
 		{
 			if (bullets->active)
 			{
-				bullets->DrawCube(devcon, bullets->pos.x, bullets->pos.y, bullets->pos.z, camView, camProjection);
-				bullets->pos.x = bullets->pos.x + bullets->bulletPos.x / 2;
-				bullets->pos.z = bullets->pos.z + bullets->bulletPos.z / 2;
+				bullets->DrawBullet(devcon);
 			}
 		}
-
 }
 
 

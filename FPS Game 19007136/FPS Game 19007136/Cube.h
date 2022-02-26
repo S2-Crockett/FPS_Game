@@ -36,8 +36,6 @@ public:
 	dx::XMFLOAT3 pos;
 	dx::XMFLOAT3 scale = {2.0f, 3.0f, 2.0f};
 
-	dx::XMFLOAT3 bulletPos;
-
 	dx::XMVECTOR position;
 
 	float rot = 0.0f;

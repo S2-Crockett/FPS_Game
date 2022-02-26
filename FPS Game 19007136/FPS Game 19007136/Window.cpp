@@ -160,10 +160,10 @@ void Window::DrawScene(double time)
 	devcon->ClearRenderTargetView(backbuffer, bgColor);
 	devcon->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-
 	devcon->IASetIndexBuffer(game.GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	devcon->IASetVertexBuffers(0, 1, &game.GFX.vertexBuffer, &game.GFX.stride, &game.GFX.offset);
 
+	game.DrawScene();
 	ReadMap();
 
 	//Present the backbuffer to the screen
