@@ -23,7 +23,7 @@ public:
 		dx::XMMATRIX camView, dx::XMMATRIX camProjection);
 
 	void Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3D11Device* dev, Inputs input, dx::XMMATRIX camView, dx::XMMATRIX camProjection, dx::XMFLOAT3 rotation, dx::XMFLOAT3 camPos, dx::XMVECTOR camTarget);
-	void DrawBullet(ID3D11DeviceContext* devcon);
+	void DrawBullet(ID3D11DeviceContext* devcon, dx::XMMATRIX _camView, dx::XMMATRIX _camProjection);
 
 	static const int width = 20;
 	static const int height = 20;

@@ -21,40 +21,28 @@ void Bullet::CreateBullet(HRESULT hresult, ID3D11Device* dev, const wchar_t* fil
 
 void Bullet::Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3D11Device* dev, Inputs input, dx::XMMATRIX _camView, dx::XMMATRIX _camProjection, dx::XMFLOAT3 rotation, dx::XMFLOAT3 camPos, dx::XMVECTOR camTarget)
 {
+	bullet.CreateBuffer(hresult, dev);
+	bullet.CreateTexture(hresult, dev, L"Image.jpg");
 
-	dx::XMFLOAT3 test(0, 0, 0);
-	if (input.shoot)
-	{
-		if (!shot)
-		{
-			camView = _camView;
-			camProjection = _camProjection;
+	bullet.rot = rotation.z * 3.157;
+	bullet.pos = camPos;
 
-			bullet.CreateBuffer(hresult, dev);
-			bullet.CreateTexture(hresult, dev, L"Image.jpg");
-
-			bullet.rot = rotation.z * 3.157;
-			bullet.pos = camPos;
-
-			dx::XMFLOAT3 camForward;
-			dx::XMStoreFloat3(&camForward, camTarget);
-			dx::XMVECTOR direction = { camForward.x - camPos.x,
-									   camForward.y - camPos.y,
-									   camForward.z - camPos.z, 0 };
+	dx::XMFLOAT3 camForward;
+	dx::XMStoreFloat3(&camForward, camTarget);
+	dx::XMVECTOR direction = { camForward.x - camPos.x,
+							   camForward.y - camPos.y,
+							   camForward.z - camPos.z, 0 };
 
 
-			dx::XMStoreFloat3(&result, direction);
+	dx::XMStoreFloat3(&result, direction);
 
-			active = true;
-			bulletPos = result;
-			shot = true;
-		}
-	}
+	active = true;
+	bulletPos = result;
 }
 
-void Bullet::DrawBullet(ID3D11DeviceContext* devcon)
+void Bullet::DrawBullet(ID3D11DeviceContext* devcon, dx::XMMATRIX _camView, dx::XMMATRIX _camProjection)
 {
-	bullet.DrawCube(devcon, bullet.pos.x, bullet.pos.y, bullet.pos.z, camView, camProjection);
+	bullet.DrawCube(devcon, bullet.pos.x, bullet.pos.y, bullet.pos.z, _camView, _camProjection);
 	bullet.pos.x = bullet.pos.x + bulletPos.x / 2;
 	bullet.pos.z = bullet.pos.z + bulletPos.z / 2;
 }

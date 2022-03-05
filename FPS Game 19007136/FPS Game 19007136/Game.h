@@ -22,7 +22,8 @@ public:
 	HRESULT hresult;
 	HWND hwnd = NULL;
 
-	void Update(int enemies, int& index);
+	void Update(int enemies, int& index, int state);
+	void UpdateStartMenuScene();
 	void UpdateScene();
 
 	void DrawScene();
@@ -31,11 +32,17 @@ public:
 	bool Collision(dx::XMFLOAT3 bullet, dx::XMFLOAT3 target);
 	void WallCollision(std::vector<bool>& collidedFront, bool& collided);
 
+	void Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3D11Device* dev);
 
-	BillBoard billboard[2];
+
+	BillBoard billboard[1];
 
 	int enemiesDead = 0;
 	int index = 0;
+	int bullerIndex = -1;
+	bool shot = false;
+
+	std::vector<std::unique_ptr<Bullet>> bullet_;
 
 	std::vector<bool> collidedFront, collidedBack, collidedLeft, collidedRight;
 };

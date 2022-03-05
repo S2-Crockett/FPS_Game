@@ -26,9 +26,6 @@ void Camera::CreateBuffer(HRESULT hresult, ID3D11Device* dev)
 	floorCube.CreateBuffer(hresult, dev);
 	floorCube.CreateTexture(hresult, dev, L"Image2.jpg");
 
-
-
-
 	//Camera information
 	camPosition = dx::XMVectorSet(camPos.x, camPos.y, camPos.z, 0.0f);
 	camTarget = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -39,9 +36,6 @@ void Camera::CreateBuffer(HRESULT hresult, ID3D11Device* dev)
 
 	//Set the Projection matrix
 	camProjection = dx::XMMatrixPerspectiveFovLH(0.4f * 3.14f, Width / Height, 1.0f, 1000.0f);
-
-
-
 }
 
 void Camera::DrawCube(ID3D11DeviceContext* devcon, float x, float y, float z, int index)
@@ -50,6 +44,7 @@ void Camera::DrawCube(ID3D11DeviceContext* devcon, float x, float y, float z, in
 	cube[index].scale = Scale;
 	cube[index].DrawCube(devcon, x, y + 5, z, camView, camProjection);
 }
+
 void Camera::DrawFloorCube(ID3D11DeviceContext* devcon, float x, float y, float z, int index)
 {
 	dx::XMFLOAT3 Scale(150, 2, 50);
@@ -62,24 +57,33 @@ void Camera::DrawFloorCube(ID3D11DeviceContext* devcon, float x, float y, float 
 
 void Camera::Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3D11Device* dev)
 {
-
 	dx::XMFLOAT3 test(0, 0, 0);
-		if (input.shoot)
+	if (input.shoot)
+	{
+		if (!shot)
 		{
-				index++;
-				bullet_.emplace_back(new Bullet);
-				bullet_.at(index) = std::make_unique<Bullet>();
-				bullet_.at(index)->Shoot(devcon, timer, hresult, dev, input, camView, camProjection, rotation, camPos, camTarget);
+			index += 1;
+			bullet_.emplace_back(new Bullet);
+			bullet_.at(index) = std::make_unique<Bullet>();
+
+			bullet_.at(index)->Shoot(devcon, timer, hresult, dev, input, camView, camProjection, rotation, camPos, camTarget);
+			shot = true;
 		}
-
-
-		for (auto& bullets : bullet_)
+	}
+	else
+	{
+		dx::XMVECTOR test;
+		test = dx::XMLoadFloat3(&rotation);
+		dx::XMVector3Normalize(test);
+		shot = false;
+	}
+	for (auto& bullets : bullet_)
+	{
+		if (bullets->active)
 		{
-			if (bullets->active)
-			{
-				bullets->DrawBullet(devcon);
-			}
+			bullets->DrawBullet(devcon, camView, camProjection);
 		}
+	}
 }
 
 
@@ -91,84 +95,84 @@ void Camera::UpdateCamera(double time, dx::XMFLOAT3 pos_)
 	dx::XMVECTOR speed = dx::XMVectorSet(250.0f * time, 0.0f, 250.0f * time, 0.0f);
 
 
-		input.camRotationMatrix = dx::XMMatrixRotationRollPitchYaw(0, input.camYaw, 0);
-		camTarget = dx::XMVector3TransformCoord(input.DefaultForward, input.camRotationMatrix);
-		camTarget = dx::XMVector3Normalize(camTarget);
+	input.camRotationMatrix = dx::XMMatrixRotationRollPitchYaw(0, input.camYaw, 0);
+	camTarget = dx::XMVector3TransformCoord(input.DefaultForward, input.camRotationMatrix);
+	camTarget = dx::XMVector3Normalize(camTarget);
 
-		dx::XMMATRIX RotateYTempMatrix;
-		RotateYTempMatrix = dx::XMMatrixRotationY(input.camYaw);
+	dx::XMMATRIX RotateYTempMatrix;
+	RotateYTempMatrix = dx::XMMatrixRotationY(input.camYaw);
 
-		input.camRight = XMVector3TransformCoord(input.DefaultRight, RotateYTempMatrix);
-		camUp = XMVector3TransformCoord(camUp, RotateYTempMatrix);
-		input.camForward = XMVector3TransformCoord(input.DefaultForward, RotateYTempMatrix);
-
-
-			dx::XMFLOAT3 forwardBack;
-			dx::XMStoreFloat3(&forwardBack, test);
-
-			float dot = {(forwardBack.x * test2.x) + (forwardBack.y * test2.y) + (forwardBack.z * test2.z)};
-			float x = test2.x * dot;
-			float y = test2.y * dot; 
-			float z = test2.z * dot;
+	input.camRight = XMVector3TransformCoord(input.DefaultRight, RotateYTempMatrix);
+	camUp = XMVector3TransformCoord(camUp, RotateYTempMatrix);
+	input.camForward = XMVector3TransformCoord(input.DefaultForward, RotateYTempMatrix);
 
 
+	dx::XMFLOAT3 forwardBack;
+	dx::XMStoreFloat3(&forwardBack, test);
 
-		
-		if (collidedFront || collidedBack || collidedRight || collidedLeft)
+	float dot = { (forwardBack.x * test2.x) + (forwardBack.y * test2.y) + (forwardBack.z * test2.z) };
+	float x = test2.x * dot;
+	float y = test2.y * dot;
+	float z = test2.z * dot;
+
+
+
+
+	if (collidedFront || collidedBack || collidedRight || collidedLeft)
+	{
+		if (collidedFront)
 		{
-			if (collidedFront)
-			{
-				//forwardBack.x -= x;
-				//forwardBack.y -= y;
-				forwardBack.z += z;
-				test = dx::XMLoadFloat3(&forwardBack);
-				test = dx::XMVector3Normalize(test);
-			}
-			else if (collidedBack)
-			{
-				//forwardBack.x -= x;
-				//forwardBack.y -= y;
-				forwardBack.z -= z;
-				test = dx::XMLoadFloat3(&forwardBack);
-				test = dx::XMVector3Normalize(test);
-			}
-			else if (collidedRight)
-			{
-				//forwardBack.z -= z;
-				//forwardBack.y -= y;
-				forwardBack.x += x;
-				test = dx::XMLoadFloat3(&forwardBack);
-				test = dx::XMVector3Normalize(test);
-			}
-			else if (collidedLeft)
-			{
-				//forwardBack.z -= z;
-				//forwardBack.y -= y;
-				forwardBack.x -= x;
-				test = dx::XMLoadFloat3(&forwardBack);
-				test = dx::XMVector3Normalize(test);
-			}
-			camPosition = dx::XMVectorAdd(camPosition, dx::XMVectorMultiply(input.moveBackForward, dx::XMVectorMultiply(test, speed)));
+			//forwardBack.x -= x;
+			//forwardBack.y -= y;
+			forwardBack.z += z;
+			test = dx::XMLoadFloat3(&forwardBack);
+			test = dx::XMVector3Normalize(test);
 		}
-		else
+		else if (collidedBack)
 		{
-			camPosition = dx::XMVectorAdd(camPosition, dx::XMVectorMultiply(input.moveBackForward, input.camForward));
-			//camPosition = dx::XMVectorAdd(camPosition, dx::XMVectorMultiply(input.moveLeftRight, input.camRight));
+			//forwardBack.x -= x;
+			//forwardBack.y -= y;
+			forwardBack.z -= z;
+			test = dx::XMLoadFloat3(&forwardBack);
+			test = dx::XMVector3Normalize(test);
 		}
-		
+		else if (collidedRight)
+		{
+			//forwardBack.z -= z;
+			//forwardBack.y -= y;
+			forwardBack.x += x;
+			test = dx::XMLoadFloat3(&forwardBack);
+			test = dx::XMVector3Normalize(test);
+		}
+		else if (collidedLeft)
+		{
+			//forwardBack.z -= z;
+			//forwardBack.y -= y;
+			forwardBack.x -= x;
+			test = dx::XMLoadFloat3(&forwardBack);
+			test = dx::XMVector3Normalize(test);
+		}
+		camPosition = dx::XMVectorAdd(camPosition, dx::XMVectorMultiply(input.moveBackForward, dx::XMVectorMultiply(test, speed)));
+	}
+	else
+	{
+		camPosition = dx::XMVectorAdd(camPosition, dx::XMVectorMultiply(input.moveBackForward, input.camForward));
+		//camPosition = dx::XMVectorAdd(camPosition, dx::XMVectorMultiply(input.moveLeftRight, input.camRight));
+	}
 
 
-		input.moveLeftRight = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-		input.moveBackForward = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
-		dx::XMVECTOR target = dx::XMVectorAdd(camPosition, camTarget);
-		camTarget = target;
+	input.moveLeftRight = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	input.moveBackForward = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
-		camView = dx::XMMatrixLookAtLH(camPosition, camTarget, camUp);
+	dx::XMVECTOR target = dx::XMVectorAdd(camPosition, camTarget);
+	camTarget = target;
 
-		dx::XMVECTOR offset = dx::XMVectorSet(-1.0f, -1.0f, -1.0f, -1.0f);
-		dx::XMStoreFloat3(&camPos, camPosition);
-		dx::XMStoreFloat3(&rotation, dx::XMVectorMultiply(input.camRight, offset));
+	camView = dx::XMMatrixLookAtLH(camPosition, camTarget, camUp);
+
+	dx::XMVECTOR offset = dx::XMVectorSet(-1.0f, -1.0f, -1.0f, -1.0f);
+	dx::XMStoreFloat3(&camPos, camPosition);
+	dx::XMStoreFloat3(&rotation, dx::XMVectorMultiply(input.camRight, offset));
 }
 
 
@@ -182,10 +186,10 @@ bool Camera::Intersecting(dx::XMFLOAT3 pos, dx::XMFLOAT3 scale)
 		camPos.z <= pos.z + scale.z + 4.0f);
 }
 
-void Camera::Resolve(dx::XMFLOAT3 pos_, dx::XMFLOAT3 scale_, std::vector<bool> &collidedFront_, std::vector<bool>& collidedBack_, std::vector<bool>& collidedLeft_, std::vector<bool>& collidedRight_, int index)
+void Camera::Resolve(dx::XMFLOAT3 pos_, dx::XMFLOAT3 scale_, std::vector<bool>& collidedFront_, std::vector<bool>& collidedBack_, std::vector<bool>& collidedLeft_, std::vector<bool>& collidedRight_, int index)
 {
 	dx::XMFLOAT3 objMin = { pos_.x - scale_.x, pos_.y, pos_.z };
-	dx::XMFLOAT3 objMax = { pos_.x + scale_.x, pos_.y + scale_.y, pos_.z +scale_.z};
+	dx::XMFLOAT3 objMax = { pos_.x + scale_.x, pos_.y + scale_.y, pos_.z + scale_.z };
 	dx::XMFLOAT3 thisMin = { camPos.x - scale.x, camPos.y, camPos.z };
 	dx::XMFLOAT3 thisMax = { camPos.x + scale.x, camPos.y + scale.y, camPos.z + scale.z };
 

@@ -157,6 +157,7 @@
     <ClCompile Include="Inputs.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="StartMenu.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -194,6 +195,7 @@
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Inputs.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="StartMenu.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

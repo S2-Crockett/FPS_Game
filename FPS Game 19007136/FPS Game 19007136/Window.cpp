@@ -148,11 +148,12 @@ bool Window::InitScene()
 void Window::InitDirectInput(HINSTANCE hInstance)
 {
 	game.camera.InitDirectInput(hInstance, hresult, hwnd);
+	startMenu.input.InitDirectInput(hInstance, hresult, hwnd);
+	endMenu.input.InitDirectInput(hInstance, hresult, hwnd);
 }
 
 void Window::DrawScene(double time)
 {
-
 	//Clear our backbuffer to the updated color
 
 	const float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -163,8 +164,33 @@ void Window::DrawScene(double time)
 	devcon->IASetIndexBuffer(game.GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	devcon->IASetVertexBuffers(0, 1, &game.GFX.vertexBuffer, &game.GFX.stride, &game.GFX.offset);
 
-	game.DrawScene();
-	ReadMap();
+	if (states == IN_GAME)
+	{
+		game.DrawScene();
+		ReadMap();
+	}
+	else if (states == IN_START_MENU)
+	{
+		startMenu.CreateBuffer(hresult, dev, L"StartMenuImage.jpg");
+		game.camera.camPos = camPosReset;
+		startMenu.DrawCube(devcon, 20,2,-20, game.camera.camView, game.camera.camProjection);
+		startMenu.UpdateBillboard(game.timer.frameTime, game.camera.camPos);
+	}
+	else if (states == IN_END_MENU)
+	{
+		endMenu.CreateBuffer(hresult, dev, L"StartMenuImage.jpg");
+		game.camera.camPos = camPosReset;
+
+		game.camera.camPosition = dx::XMVectorSet(game.camera.camPos.x, game.camera.camPos.y, game.camera.camPos.z, 0.0f);
+		game.camera.camTarget = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		game.camera.camUp = dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+		//Set the View matrix
+		game.camera.camView = dx::XMMatrixLookAtLH(game.camera.camPosition, game.camera.camTarget, game.camera.camUp);
+
+		endMenu.DrawCube(devcon, 20, 2, -20, game.camera.camView, game.camera.camProjection);
+		endMenu.UpdateBillboard(game.timer.frameTime, game.camera.camPos);
+	}
 
 	//Present the backbuffer to the screen
 	swapchain->Present(0, 0);
@@ -254,8 +280,45 @@ int Window::messageloop() {
 			DispatchMessage(&msg);
 		}
 		else {
-			game.Update(enemies, index);
-			DrawScene(game.timer.frameTime);
+			switch (states)
+			{
+			case IN_START_MENU:
+			{
+				game.Update(enemies, index, states);
+				startMenu.DetectInput(game.timer.frameTime, hwnd);
+				DrawScene(game.timer.frameTime);
+				if (startMenu.input.enter)
+				{
+					states = IN_GAME;
+				}
+				break;
+			}
+			case IN_GAME:
+			{
+				game.Update(enemies, index, states);
+				DrawScene(game.timer.frameTime);
+				if (game.enemiesDead == sizeof(game.billboard) / sizeof(*game.billboard))
+				{
+					states = IN_END_MENU;
+				}
+				break;
+			}
+			case IN_END_MENU:
+			{
+				game.Update(enemies, index, states);
+				endMenu.DetectInput(game.timer.frameTime, hwnd);
+				DrawScene(game.timer.frameTime);
+
+
+
+				if (endMenu.input.leave)
+				{
+					DestroyWindow(hwnd);
+				}
+				break;
+			}
+			}
+
 		}
 	}
 	return msg.wParam;

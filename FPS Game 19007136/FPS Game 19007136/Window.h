@@ -1,12 +1,20 @@
 #pragma once
 #include <Windows.h>
 #include "Game.h"
+#include "StartMenu.h"
 #include <dxgi.h>
 #include <DirectXMath.h>
 #include <fstream>
 #include <iostream>
 #include <string>
 
+
+enum States
+{
+	IN_START_MENU = 0,
+	IN_GAME = 1,
+	IN_END_MENU = 2
+};
 
 namespace dx = DirectX;
 using namespace std;
@@ -28,7 +36,7 @@ public:
 	void InitDirectInput(HINSTANCE hInstance);
 	void ReadMap();
 
-
+	States states = IN_START_MENU;
 
 	const int Width = 800;
 	const int Height = 600;
@@ -71,9 +79,12 @@ private:
 
 	int enemiesDead = 0;
 
+	dx::XMFLOAT3 camPosReset = { 30.0f, 3.0f, -30.0f };
+
 
 	Game game;
-
+	StartMenu startMenu;
+	StartMenu endMenu;
 
 	fstream indata;
 	char ch;

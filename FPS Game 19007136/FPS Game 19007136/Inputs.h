@@ -36,6 +36,8 @@ public:
 	float scaleY = 1.0f;
 
 	bool shoot = false;
+	bool enter = false;
+	bool leave = false;
 
 	dx::XMMATRIX Rotationx;
 	dx::XMMATRIX Rotationz;

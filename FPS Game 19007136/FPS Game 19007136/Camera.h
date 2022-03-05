@@ -55,15 +55,17 @@ public:
 	dx::XMMATRIX camView;
 	dx::XMMATRIX camProjection;
 
+	dx::XMVECTOR camTarget;
+	dx::XMVECTOR camUp;
 
 private:
 
 	dx::XMMATRIX World;
 
 
-	dx::XMVECTOR camTarget;
+
 	dx::XMFLOAT3 camTarget_;
-	dx::XMVECTOR camUp;
+
 
 	int index = -1;
 	bool shot = false;

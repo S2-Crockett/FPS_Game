@@ -79,6 +79,14 @@ void Inputs::DetectInput(double time, HWND hwnd)
 
         mouseLastState = mouseCurrState;
     }
+    if (keyboardState[DIK_SPACE] & 0x80)
+    {
+        enter = true;
+    }
+    if (keyboardState[DIK_ESCAPE] & 0x80)
+    {
+        leave = true;
+    }
 
     return;
 }
