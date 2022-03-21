@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include <string>
 #include <iostream>
+using namespace std;
 
 
 
@@ -116,8 +117,6 @@ void Camera::UpdateCamera(double time, dx::XMFLOAT3 pos_)
 	float z = test2.z * dot;
 
 
-
-
 	if (collidedFront || collidedBack || collidedRight || collidedLeft)
 	{
 		if (collidedFront)
@@ -157,12 +156,9 @@ void Camera::UpdateCamera(double time, dx::XMFLOAT3 pos_)
 	else
 	{
 		camPosition = dx::XMVectorAdd(camPosition, dx::XMVectorMultiply(input.moveBackForward, input.camForward));
-		//camPosition = dx::XMVectorAdd(camPosition, dx::XMVectorMultiply(input.moveLeftRight, input.camRight));
 	}
 
 
-
-	input.moveLeftRight = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	input.moveBackForward = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	dx::XMVECTOR target = dx::XMVectorAdd(camPosition, camTarget);

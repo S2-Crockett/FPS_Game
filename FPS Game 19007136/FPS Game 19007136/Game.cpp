@@ -15,17 +15,18 @@ void Game::Update(int enemies, int& index_, int state)
 
 	if (state == 1)
 	{
+		
 	camera.DetectInput(timer.frameTime, hwnd);
 
 	for (auto& bullets : bullet_)
 	{
 		for (int e = 0; e < enemies; e++)
 		{
-			if (Collision(bullets->bullet.pos, billboard[e].pos) &&
-				billboard[e].active)
+			if (Collision(bullets->bullet.pos, billboard_.at(e).get()->pos) &&
+				billboard_.at(e).get()->active)
 			{
 				bullets->active = false;
-				billboard[e].active = false;
+				billboard_.at(e).get()->active = false;
 				enemiesDead += 1;
 			}
 		}
@@ -44,9 +45,9 @@ void Game::Update(int enemies, int& index_, int state)
 	}
 	for (int e = 0; e < enemies; e++)
 	{
-		billboard[e].UpdateBillboard(timer.frameTime, camera.camPos);
+		billboard_.at(e).get()->UpdateBillboard(timer.frameTime, camera.camPos);
 	}
-	UpdateScene();
+		UpdateScene();
 	}
 }
 

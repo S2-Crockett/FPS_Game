@@ -24,7 +24,6 @@ public:
 	dx::XMMATRIX camRotationMatrix;
 	dx::XMMATRIX groundWorld;
 
-	dx::XMVECTOR moveLeftRight = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	dx::XMVECTOR moveBackForward = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	float camYaw = 0.0f;

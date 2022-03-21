@@ -7,6 +7,7 @@
 #include "Bullet.h"
 #include <vector>
 #include <algorithm>
+#include <string>
 namespace dx = DirectX;
 
 class Camera

@@ -34,8 +34,7 @@ public:
 
 	void Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3D11Device* dev);
 
-
-	BillBoard billboard[1];
+	std::vector<std::unique_ptr<BillBoard>> billboard_;
 
 	int enemiesDead = 0;
 	int index = 0;

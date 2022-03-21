@@ -155,7 +155,6 @@ void Window::InitDirectInput(HINSTANCE hInstance)
 void Window::DrawScene(double time)
 {
 	//Clear our backbuffer to the updated color
-
 	const float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	devcon->ClearRenderTargetView(backbuffer, bgColor);
@@ -178,7 +177,7 @@ void Window::DrawScene(double time)
 	}
 	else if (states == IN_END_MENU)
 	{
-		endMenu.CreateBuffer(hresult, dev, L"StartMenuImage.jpg");
+		endMenu.CreateBuffer(hresult, dev, L"ExitMenuImage.jpg");
 		game.camera.camPos = camPosReset;
 
 		game.camera.camPosition = dx::XMVectorSet(game.camera.camPos.x, game.camera.camPos.y, game.camera.camPos.z, 0.0f);
@@ -251,10 +250,12 @@ void Window::ReadMap()
 
 	for (int e = 0; e < enemies; e++)
 	{
-		if (game.billboard[e].active)
-		{
-			game.billboard[e].CreateBuffer(hresult, dev, L"Image1.jpg");
-			game.billboard[e].DrawCube(devcon, enemyPos[e].first * 4, 3, -enemyPos[e].second * 4, game.camera.camView, game.camera.camProjection);
+		game.billboard_.emplace_back(new BillBoard);
+
+		if (game.billboard_.at(e).get()->active)
+		{		
+			game.billboard_.at(e).get()->CreateBuffer(hresult, dev, L"Image1.jpg");
+			game.billboard_.at(e).get()->DrawCube(devcon, enemyPos[e].first * 4, 3, -enemyPos[e].second * 4, game.camera.camView, game.camera.camProjection);
 		}
 	}
 }
@@ -280,13 +281,14 @@ int Window::messageloop() {
 			DispatchMessage(&msg);
 		}
 		else {
+
+			game.Update(enemies, index, states);
+			DrawScene(game.timer.frameTime);
 			switch (states)
 			{
 			case IN_START_MENU:
 			{
-				game.Update(enemies, index, states);
 				startMenu.DetectInput(game.timer.frameTime, hwnd);
-				DrawScene(game.timer.frameTime);
 				if (startMenu.input.enter)
 				{
 					states = IN_GAME;
@@ -295,9 +297,7 @@ int Window::messageloop() {
 			}
 			case IN_GAME:
 			{
-				game.Update(enemies, index, states);
-				DrawScene(game.timer.frameTime);
-				if (game.enemiesDead == sizeof(game.billboard) / sizeof(*game.billboard))
+				if (game.enemiesDead == enemies)
 				{
 					states = IN_END_MENU;
 				}
@@ -305,12 +305,7 @@ int Window::messageloop() {
 			}
 			case IN_END_MENU:
 			{
-				game.Update(enemies, index, states);
 				endMenu.DetectInput(game.timer.frameTime, hwnd);
-				DrawScene(game.timer.frameTime);
-
-
-
 				if (endMenu.input.leave)
 				{
 					DestroyWindow(hwnd);

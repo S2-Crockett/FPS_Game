@@ -47,21 +47,9 @@ void Inputs::DetectInput(double time, HWND hwnd)
 
     dx::XMVECTOR speed = dx::XMVectorSet(15.0f * time, 0.0f, 15.0f * time, 0.0f);
 
-    if (keyboardState[DIK_A] & 0x80)
-    {
-        moveLeftRight = dx::XMVectorSubtract(moveLeftRight, speed);
-    }
-    if (keyboardState[DIK_D] & 0x80)
-    {
-        moveLeftRight = dx::XMVectorAdd(moveLeftRight, speed);
-    }
     if (keyboardState[DIK_W] & 0x80)
     {
         moveBackForward = dx::XMVectorAdd(moveBackForward, speed);
-    }
-    if (keyboardState[DIK_S] & 0x80)
-    {
-        moveBackForward = dx::XMVectorSubtract(moveBackForward, speed);
     }
     if (keyboardState[DIK_F] & 0x80)
     {
