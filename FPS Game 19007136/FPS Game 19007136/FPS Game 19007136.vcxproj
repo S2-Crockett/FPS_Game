@@ -206,6 +206,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Brick.JPG" />
+    <Image Include="Ground.jpg" />
     <Image Include="Image.jpg" />
     <Image Include="Image1.jpg" />
     <Image Include="Image2.jpg" />

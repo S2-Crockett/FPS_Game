@@ -108,6 +108,12 @@
     <Image Include="Image2.jpg">
       <Filter>Images</Filter>
     </Image>
+    <Image Include="Brick.JPG">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Ground.jpg">
+      <Filter>Images</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Map.txt">
