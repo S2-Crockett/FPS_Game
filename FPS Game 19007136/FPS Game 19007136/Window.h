@@ -64,8 +64,8 @@ public:
 private:
 
 	IDXGISwapChain* swapchain;
-	ID3D11Device* dev;
-	ID3D11DeviceContext* devcon;
+	ID3D11Device* device;
+	ID3D11DeviceContext* deviceContext;
 	ID3D11RenderTargetView* backbuffer;
 	ID3D11DepthStencilView* depthStencilView;
 	ID3D11Texture2D* depthStencilBuffer;
@@ -88,8 +88,8 @@ private:
 
 	fstream indata;
 	char ch;
-	int lines = 1.0f;
-	int chr = 0.0f;
+	int lines = 1;
+	int chr = 0;
 
 	bool test = true;
 	dx::XMFLOAT3 Pos;

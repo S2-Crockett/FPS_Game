@@ -2,44 +2,44 @@
 
 #pragma comment(lib, "d3d11.lib")
 
-struct cbPerObject
+struct constantObjectBuffer
 {
 	dx::XMMATRIX WVP;
 };
 
-cbPerObject cbPerObj;
+constantObjectBuffer constantObjBuffer;
 
 Cube::Cube()
 {
 
 }
 
-void Cube::DrawCube(ID3D11DeviceContext* devcon, float x,float y, float z,
-		dx::XMMATRIX camView, dx::XMMATRIX camProjection)
+void Cube::DrawCube(ID3D11DeviceContext* deviceContext, float x,float y, float z,
+		dx::XMMATRIX cameraView, dx::XMMATRIX cameraProjection)
 {
 	pos.x = x;
 	pos.y = y;
 	pos.z = z;
 	
 
-	cube1World = dx::XMMatrixIdentity();
+	cube = dx::XMMatrixIdentity();
 
 	//Define cube1's world space matrix
-	dx::XMVECTOR rotaxis = dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	Rotation = dx::XMMatrixRotationAxis(rotaxis, rot);
+	dx::XMVECTOR rotationAxis = dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	Rotation = dx::XMMatrixRotationAxis(rotationAxis, rotation);
 	Translation = dx::XMMatrixTranslation(pos.x, pos.y, pos.z);
 	Scale = dx::XMMatrixScaling(scale.x, scale.y, scale.z);
 
-	cube1World = Scale * Rotation * Translation;
+	cube = Scale * Rotation * Translation;
 
-	WVP = cube1World * camView * camProjection;
-	cbPerObj.WVP = XMMatrixTranspose(WVP);
-	devcon->UpdateSubresource(cbPerObjectBuffer, 0, NULL, &cbPerObj, 0, 0);
-	devcon->VSSetConstantBuffers(0, 1, &cbPerObjectBuffer);
+	WVP = cube * cameraView * cameraProjection;
+	constantObjBuffer.WVP = XMMatrixTranspose(WVP);
+	deviceContext->UpdateSubresource(constantBuffer, 0, NULL, &constantObjBuffer, 0, 0);
+	deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
 
-	devcon->PSSetShaderResources(0, 1, &CubesTexture);
+	deviceContext->PSSetShaderResources(0, 1, &CubesTexture);
 
-	devcon->DrawIndexed(36, 0, 0);
+	deviceContext->DrawIndexed(36, 0, 0);
 
 	position = dx::XMLoadFloat3(&pos);
 }
@@ -50,12 +50,12 @@ void Cube::CreateBuffer(HRESULT hresult, ID3D11Device* dev)
 	ZeroMemory(&cbbd, sizeof(D3D11_BUFFER_DESC));
 
 	cbbd.Usage = D3D11_USAGE_DEFAULT;
-	cbbd.ByteWidth = sizeof(cbPerObject);
+	cbbd.ByteWidth = sizeof(constantObjectBuffer);
 	cbbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cbbd.CPUAccessFlags = 0;
 	cbbd.MiscFlags = 0;
 
-	hresult = dev->CreateBuffer(&cbbd, NULL, &cbPerObjectBuffer);
+	hresult = dev->CreateBuffer(&cbbd, NULL, &constantBuffer);
 }
 
 void Cube::CreateTexture(HRESULT hresult, ID3D11Device* dev, const wchar_t* file)
@@ -63,7 +63,7 @@ void Cube::CreateTexture(HRESULT hresult, ID3D11Device* dev, const wchar_t* file
 	dx::ScratchImage image_data;
 	hresult = dx::LoadFromWICFile(file, dx::WIC_FLAGS_NONE, nullptr, image_data);
 
-	hresult = dx::CreateTexture(dev, image_data.GetImages(), image_data.GetImageCount(), image_data.GetMetadata(), &m_texture);
+	hresult = dx::CreateTexture(dev, image_data.GetImages(), image_data.GetImageCount(), image_data.GetMetadata(), &textureResource);
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC desc = {};
 	desc.Format = image_data.GetMetadata().format;
@@ -71,5 +71,5 @@ void Cube::CreateTexture(HRESULT hresult, ID3D11Device* dev, const wchar_t* file
 	desc.Texture2D.MipLevels = image_data.GetMetadata().mipLevels;
 	desc.Texture2D.MostDetailedMip = 0;
 
-	dev->CreateShaderResourceView(m_texture, &desc, &CubesTexture);
+	dev->CreateShaderResourceView(textureResource, &desc, &CubesTexture);
 }

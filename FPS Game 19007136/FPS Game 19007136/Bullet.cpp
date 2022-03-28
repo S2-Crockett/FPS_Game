@@ -1,38 +1,29 @@
 #include "Bullet.h"
+#include <string>
 
 #pragma comment(lib, "d3d11.lib")
 
-struct cbPerObject
+struct constantObjectBuffer
 {
 	dx::XMMATRIX WVP;
 };
 
-cbPerObject _cbPerObj;
+constantObjectBuffer _constantObjBuffer;
 
 
-
-
-void Bullet::CreateBullet(HRESULT hresult, ID3D11Device* dev, const wchar_t* file, ID3D11DeviceContext* devcon, dx::XMFLOAT3 pos, dx::XMMATRIX _camView, dx::XMMATRIX _camProjection)
+void Bullet::Shoot(ID3D11DeviceContext* deviceContext, double timer, HRESULT hresult, ID3D11Device* device, Inputs input, dx::XMMATRIX cameraView, dx::XMMATRIX cameraProjection, dx::XMFLOAT3 rotation, dx::XMFLOAT3 cameraPosition, dx::XMVECTOR cameraTarget)
 {
-	bullet.CreateBuffer(hresult, dev);
-	bullet.CreateTexture(hresult, dev, L"Image.jpg");
-}
+	bullet.CreateBuffer(hresult, device);
+	bullet.CreateTexture(hresult, device, L"Image.jpg");
 
-
-void Bullet::Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3D11Device* dev, Inputs input, dx::XMMATRIX _camView, dx::XMMATRIX _camProjection, dx::XMFLOAT3 rotation, dx::XMFLOAT3 camPos, dx::XMVECTOR camTarget)
-{
-	bullet.CreateBuffer(hresult, dev);
-	bullet.CreateTexture(hresult, dev, L"Image.jpg");
-
-	bullet.rot = rotation.z * 3.157;
-	bullet.pos = camPos;
+	bullet.rotation = rotation.z * 3.157;
+	bullet.pos = cameraPosition;
 
 	dx::XMFLOAT3 camForward;
-	dx::XMStoreFloat3(&camForward, camTarget);
-	dx::XMVECTOR direction = { camForward.x - camPos.x,
-							   camForward.y - camPos.y,
-							   camForward.z - camPos.z, 0 };
-
+	dx::XMStoreFloat3(&camForward, cameraTarget);
+	dx::XMVECTOR direction = { camForward.x - cameraPosition.x,
+							   camForward.y - cameraPosition.y,
+							   camForward.z - cameraPosition.z, 0 };
 
 	dx::XMStoreFloat3(&result, direction);
 
@@ -40,9 +31,9 @@ void Bullet::Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, I
 	bulletPos = result;
 }
 
-void Bullet::DrawBullet(ID3D11DeviceContext* devcon, dx::XMMATRIX _camView, dx::XMMATRIX _camProjection)
+void Bullet::DrawBullet(ID3D11DeviceContext* deviceContext, dx::XMMATRIX cameraView, dx::XMMATRIX cameraProjection)
 {
-	bullet.DrawCube(devcon, bullet.pos.x, bullet.pos.y, bullet.pos.z, _camView, _camProjection);
+	bullet.DrawCube(deviceContext, bullet.pos.x, bullet.pos.y, bullet.pos.z, cameraView, cameraProjection);
 	bullet.pos.x = bullet.pos.x + bulletPos.x / 2;
 	bullet.pos.z = bullet.pos.z + bulletPos.z / 2;
 }

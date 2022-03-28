@@ -101,6 +101,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,6 +130,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -155,7 +157,6 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Inputs.cpp" />
-    <ClCompile Include="Map.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="StartMenu.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -194,7 +195,6 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Inputs.h" />
-    <ClInclude Include="Map.h" />
     <ClInclude Include="StartMenu.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Window.h" />

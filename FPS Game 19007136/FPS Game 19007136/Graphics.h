@@ -15,9 +15,8 @@ public:
 
 
 	void CleanUp();
-	void CreateShaders(HRESULT hresult, ID3D11Device* dev,
-		ID3D11DeviceContext* devcon);
-
+	void CreateShaders(HRESULT hresult, ID3D11Device* device,
+		ID3D11DeviceContext* deviceContext);
 
 
 	const int Width = 800;

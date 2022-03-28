@@ -1,17 +1,12 @@
 #include "Game.h"
 
-
-
-
-
-
 void Game::Update(int enemies, int& index_, int state)
 {
 	index = index_;
 	timer.RunTimer();
 
-	devcon->IASetIndexBuffer(GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	devcon->IASetVertexBuffers(0, 1, &GFX.vertexBuffer, &GFX.stride, &GFX.offset);
+	deviceContext->IASetIndexBuffer(GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->IASetVertexBuffers(0, 1, &GFX.vertexBuffer, &GFX.stride, &GFX.offset);
 
 	if (state == 1)
 	{
@@ -45,7 +40,7 @@ void Game::Update(int enemies, int& index_, int state)
 	}
 	for (int e = 0; e < enemies; e++)
 	{
-		billboard_.at(e).get()->UpdateBillboard(timer.frameTime, camera.camPos);
+		billboard_.at(e).get()->UpdateEnemy(timer.frameTime, camera.cameraPos);
 	}
 		UpdateScene();
 	}
@@ -61,7 +56,7 @@ bool Game::Collision(dx::XMFLOAT3 bullet, dx::XMFLOAT3 target)
 
 void Game::DrawScene()
 {
-	Shoot(devcon, timer.frameTime, hresult, dev);
+	Shoot(deviceContext, timer.frameTime, hresult, device);
 }
 
 
@@ -96,7 +91,7 @@ void Game::UpdateScene()
 }
 
 
-void Game::Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3D11Device* dev)
+void Game::Shoot(ID3D11DeviceContext* deviceContext, double timer, HRESULT hresult, ID3D11Device* device)
 {
 	dx::XMFLOAT3 test(0, 0, 0);
 	if (camera.input.shoot)
@@ -107,7 +102,7 @@ void Game::Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3
 			bullet_.emplace_back(new Bullet);
 			bullet_.at(bullerIndex) = std::make_unique<Bullet>();
 
-			bullet_.at(bullerIndex)->Shoot(devcon, timer, hresult, dev, camera.input, camera.camView, camera.camProjection, camera.rotation, camera.camPos, camera.camTarget);
+			bullet_.at(bullerIndex)->Shoot(deviceContext, timer, hresult, device, camera.input, camera.cameraView, camera.cameraProjection, camera.rotation, camera.cameraPos, camera.cameraTarget);
 			shot = true;
 		}
 	}
@@ -122,7 +117,7 @@ void Game::Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3
 	{
 		if (bullets->active)
 		{
-			bullets->DrawBullet(devcon, camera.camView, camera.camProjection);
+			bullets->DrawBullet(deviceContext, camera.cameraView, camera.cameraProjection);
 		}
 	}
 }
@@ -130,12 +125,12 @@ void Game::Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3
 
 
 
-void Game::CreateBuffer(HRESULT& hresult_, ID3D11Device*& dev_, ID3D11DeviceContext*& devcon_, HWND& hwnd_)
+void Game::CreateBuffer(HRESULT& hresult_, ID3D11Device*& device_, ID3D11DeviceContext*& deviceContext_, HWND& hwnd_)
 {
-	camera.CreateBuffer(hresult_, dev_);
+	camera.CreateBuffer(hresult_, device_);
 	hresult = hresult_;
-	dev = dev_;
-	devcon = devcon_;
+	device = device_;
+	deviceContext = deviceContext_;
 	hwnd = hwnd_;
 }
 

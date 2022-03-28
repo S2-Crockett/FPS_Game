@@ -12,18 +12,18 @@ bool Inputs::InitDirectInput(HINSTANCE hInstance, HRESULT hresult, HWND hwnd)
         NULL);
 
     hresult = DirectInput->CreateDevice(GUID_SysKeyboard,
-        &DIKeyboard,
+        &keyboardInputDevice,
         NULL);
 
     hresult = DirectInput->CreateDevice(GUID_SysMouse,
-        &DIMouse,
+        &mouseInputDevice,
         NULL);
 
-    hresult = DIKeyboard->SetDataFormat(&c_dfDIKeyboard);
-    hresult = DIKeyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+    hresult = keyboardInputDevice->SetDataFormat(&c_dfDIKeyboard);
+    hresult = keyboardInputDevice->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 
-    hresult = DIMouse->SetDataFormat(&c_dfDIMouse);
-    hresult = DIMouse->SetCooperativeLevel(hwnd, DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND);
+    hresult = mouseInputDevice->SetDataFormat(&c_dfDIMouse);
+    hresult = mouseInputDevice->SetCooperativeLevel(hwnd, DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND);
 
     return true;
 }
@@ -35,12 +35,12 @@ void Inputs::DetectInput(double time, HWND hwnd)
 
     BYTE keyboardState[256];
 
-    DIKeyboard->Acquire();
-    DIMouse->Acquire();
+    keyboardInputDevice->Acquire();
+    mouseInputDevice->Acquire();
 
-    DIMouse->GetDeviceState(sizeof(DIMOUSESTATE), &mouseCurrState);
+    mouseInputDevice->GetDeviceState(sizeof(DIMOUSESTATE), &mouseCurrState);
 
-    DIKeyboard->GetDeviceState(sizeof(keyboardState), (LPVOID)&keyboardState);
+    keyboardInputDevice->GetDeviceState(sizeof(keyboardState), (LPVOID)&keyboardState);
 
     if (keyboardState[DIK_ESCAPE] & 0x80)
         PostMessage(hwnd, WM_DESTROY, 0, 0);
@@ -49,7 +49,7 @@ void Inputs::DetectInput(double time, HWND hwnd)
 
     if (keyboardState[DIK_W] & 0x80)
     {
-        moveBackForward = dx::XMVectorAdd(moveBackForward, speed);
+        moveForward = dx::XMVectorAdd(moveForward, speed);
     }
     if (keyboardState[DIK_F] & 0x80)
     {
@@ -59,13 +59,13 @@ void Inputs::DetectInput(double time, HWND hwnd)
 	{
 		shoot = false;
 	}
-    if ((mouseCurrState.lX != mouseLastState.lX) || (mouseCurrState.lY != mouseLastState.lY))
+    if ((mouseCurrState.lX != mousePreviousState.lX) || (mouseCurrState.lY != mousePreviousState.lY))
     {
-        camYaw += mouseLastState.lX * 0.001f;
+        cameraYaw += mousePreviousState.lX * 0.001f;
 
         camPitch += mouseCurrState.lY * 0.001f;
 
-        mouseLastState = mouseCurrState;
+        mousePreviousState = mouseCurrState;
     }
     if (keyboardState[DIK_SPACE] & 0x80)
     {

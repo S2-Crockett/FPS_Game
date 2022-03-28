@@ -115,100 +115,98 @@ void Graphics::CleanUp()
 	vertLayout->Release();
 }
 
-void Graphics::CreateShaders(HRESULT hresult, ID3D11Device* dev,
-	ID3D11DeviceContext* devcon)
+
+
+void Graphics::CreateShaders(HRESULT hresult, ID3D11Device* device,
+	ID3D11DeviceContext* deviceContext)
 {
 
 	hresult = D3DCompileFromFile(L"Effect.fx", 0, 0, "VS", "vs_4_0", 0, 0, &VS_Buffer, 0);
 	hresult = D3DCompileFromFile(L"Effect.fx", 0, 0, "PS", "ps_4_0", 0, 0, &PS_Buffer, 0);
 
 
-	//Create the Shader Objects
-	hresult = dev->CreateVertexShader(VS_Buffer->GetBufferPointer(), VS_Buffer->GetBufferSize(), NULL, &VS);
-	hresult = dev->CreatePixelShader(PS_Buffer->GetBufferPointer(), PS_Buffer->GetBufferSize(), NULL, &PS);
-
-	//Set Vertex and Pixel Shaders
-	devcon->VSSetShader(VS, 0, 0);
-	devcon->PSSetShader(PS, 0, 0);
+	hresult = device->CreateVertexShader(VS_Buffer->GetBufferPointer(), VS_Buffer->GetBufferSize(), NULL, &VS);
+	hresult = device->CreatePixelShader(PS_Buffer->GetBufferPointer(), PS_Buffer->GetBufferSize(), NULL, &PS);
 
 
-
-	D3D11_BUFFER_DESC indexBufferDesc;
-	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
-
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * 12 * 3;
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA iinitData;
-
-	iinitData.pSysMem = indices;
-	hresult = dev->CreateBuffer(&indexBufferDesc, &iinitData, &indexBuffer);
-
-	D3D11_BUFFER_DESC indexBufferDesc_;
-	ZeroMemory(&indexBufferDesc_, sizeof(indexBufferDesc_));
-
-	indexBufferDesc_.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc_.ByteWidth = sizeof(DWORD) * 2 * 3;
-	indexBufferDesc_.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc_.CPUAccessFlags = 0;
-	indexBufferDesc_.MiscFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA iinitData_;
-
-	iinitData_.pSysMem = indices_;
-	hresult = dev->CreateBuffer(&indexBufferDesc_, &iinitData_, &indexBuffer_);
+	deviceContext->VSSetShader(VS, 0, 0);
+	deviceContext->PSSetShader(PS, 0, 0);
 
 
 
+	D3D11_BUFFER_DESC cubeIndexBufferDesc;
+	ZeroMemory(&cubeIndexBufferDesc, sizeof(cubeIndexBufferDesc));
+
+	cubeIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	cubeIndexBufferDesc.ByteWidth = sizeof(DWORD) * 12 * 3;
+	cubeIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	cubeIndexBufferDesc.CPUAccessFlags = 0;
+	cubeIndexBufferDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA subResData;
+
+	subResData.pSysMem = indices;
+	hresult = device->CreateBuffer(&cubeIndexBufferDesc, &subResData, &indexBuffer);
+
+	D3D11_BUFFER_DESC billboardIndexBufferDesc;
+	ZeroMemory(&billboardIndexBufferDesc, sizeof(billboardIndexBufferDesc));
+
+	billboardIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	billboardIndexBufferDesc.ByteWidth = sizeof(DWORD) * 2 * 3;
+	billboardIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	billboardIndexBufferDesc.CPUAccessFlags = 0;
+	billboardIndexBufferDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA subResData_;
+
+	subResData_.pSysMem = indices_;
+	hresult = device->CreateBuffer(&billboardIndexBufferDesc, &subResData_, &indexBuffer_);
 
 
 	stride = sizeof(Vertex);
 	offset = 0;
 
 
-	D3D11_BUFFER_DESC vertexBufferDesc;
-	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
+	D3D11_BUFFER_DESC cubeVertexBufferDesc;
+	ZeroMemory(&cubeVertexBufferDesc, sizeof(cubeVertexBufferDesc));
 
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Vertex) * 24;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
+	cubeVertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	cubeVertexBufferDesc.ByteWidth = sizeof(Vertex) * 24;
+	cubeVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	cubeVertexBufferDesc.CPUAccessFlags = 0;
+	cubeVertexBufferDesc.MiscFlags = 0;
 
-	D3D11_SUBRESOURCE_DATA vertexBufferData;
+	D3D11_SUBRESOURCE_DATA cubeVertexBufferData;
 
-	ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
-	vertexBufferData.pSysMem = v;
-	hresult = dev->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &vertexBuffer);
+	ZeroMemory(&cubeVertexBufferData, sizeof(cubeVertexBufferData));
+	cubeVertexBufferData.pSysMem = v;
+	hresult = device->CreateBuffer(&cubeVertexBufferDesc, &cubeVertexBufferData, &vertexBuffer);
 	
-	D3D11_BUFFER_DESC vertexBufferDesc_;
-	ZeroMemory(&vertexBufferDesc_, sizeof(vertexBufferDesc_));
+	D3D11_BUFFER_DESC billboardVertexBufferDesc;
+	ZeroMemory(&billboardVertexBufferDesc, sizeof(billboardVertexBufferDesc));
 
-	vertexBufferDesc_.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc_.ByteWidth = sizeof(Vertex) * 4;
-	vertexBufferDesc_.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc_.CPUAccessFlags = 0;
-	vertexBufferDesc_.MiscFlags = 0;
+	billboardVertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	billboardVertexBufferDesc.ByteWidth = sizeof(Vertex) * 4;
+	billboardVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	billboardVertexBufferDesc.CPUAccessFlags = 0;
+	billboardVertexBufferDesc.MiscFlags = 0;
 
-	D3D11_SUBRESOURCE_DATA vertexBufferData_;
+	D3D11_SUBRESOURCE_DATA billboardVertexBufferData;
 
-	ZeroMemory(&vertexBufferData_, sizeof(vertexBufferData_));
-	vertexBufferData_.pSysMem = v_;
-	hresult = dev->CreateBuffer(&vertexBufferDesc_, &vertexBufferData_, &vertexBuffer_);
+	ZeroMemory(&billboardVertexBufferData, sizeof(billboardVertexBufferData));
+	billboardVertexBufferData.pSysMem = v_;
+	hresult = device->CreateBuffer(&billboardVertexBufferDesc, &billboardVertexBufferData, &vertexBuffer_);
 
 
 	//Create the Input Layout
-	dev->CreateInputLayout(layout, numElements, VS_Buffer->GetBufferPointer(),
+	device->CreateInputLayout(layout, numElements, VS_Buffer->GetBufferPointer(),
 		VS_Buffer->GetBufferSize(), &vertLayout);
 
 	//Set the Input Layout
-	devcon->IASetInputLayout(vertLayout);
+	deviceContext->IASetInputLayout(vertLayout);
 
 	//Set Primitive Topology
-	devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//Create the Viewport
 	D3D11_VIEWPORT viewport;
@@ -222,5 +220,5 @@ void Graphics::CreateShaders(HRESULT hresult, ID3D11Device* dev,
 	viewport.MaxDepth = 1.0f;
 
 	//Set the Viewport
-	devcon->RSSetViewports(1, &viewport);
+	deviceContext->RSSetViewports(1, &viewport);
 }

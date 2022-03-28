@@ -14,22 +14,22 @@ bool Window::InitializeWindow(HINSTANCE hInstance,
 	int width, int height,
 	bool windowed)
 {
-	WNDCLASSEX wc;
+	WNDCLASSEX windowClass;
 
-	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = WndProc;
-	wc.cbClsExtra = NULL;
-	wc.cbWndExtra = NULL;
-	wc.hInstance = hInstance;
-	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
-	wc.lpszMenuName = NULL;
-	wc.lpszClassName = WndClassName;
-	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+	windowClass.cbSize = sizeof(WNDCLASSEX);
+	windowClass.style = CS_HREDRAW | CS_VREDRAW;
+	windowClass.lpfnWndProc = WndProc;
+	windowClass.cbClsExtra = NULL;
+	windowClass.cbWndExtra = NULL;
+	windowClass.hInstance = hInstance;
+	windowClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
+	windowClass.lpszMenuName = NULL;
+	windowClass.lpszClassName = WndClassName;
+	windowClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
-	RegisterClassEx(&wc);
+	RegisterClassEx(&windowClass);
 
 	hwnd = CreateWindowEx(
 		NULL,
@@ -59,24 +59,24 @@ bool Window::InitializeWindow(HINSTANCE hInstance,
 bool Window::InitializeDirect3d11App(HINSTANCE hInstance)
 {
 	//Describe our SwapChain Buffer
-	DXGI_MODE_DESC bufferDesc;
+	DXGI_MODE_DESC swapchainBufferDesc;
 
-	ZeroMemory(&bufferDesc, sizeof(DXGI_MODE_DESC));
+	ZeroMemory(&swapchainBufferDesc, sizeof(DXGI_MODE_DESC));
 
-	bufferDesc.Width = Width;
-	bufferDesc.Height = Height;
-	bufferDesc.RefreshRate.Numerator = 60;
-	bufferDesc.RefreshRate.Denominator = 1;
-	bufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	bufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	bufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	swapchainBufferDesc.Width = Width;
+	swapchainBufferDesc.Height = Height;
+	swapchainBufferDesc.RefreshRate.Numerator = 60;
+	swapchainBufferDesc.RefreshRate.Denominator = 1;
+	swapchainBufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapchainBufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	swapchainBufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
 	//Describe our SwapChain
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 
 	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
 
-	swapChainDesc.BufferDesc = bufferDesc;
+	swapChainDesc.BufferDesc = swapchainBufferDesc;
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -88,14 +88,17 @@ bool Window::InitializeDirect3d11App(HINSTANCE hInstance)
 
 	//Create our SwapChain
 	D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL,
-		D3D11_SDK_VERSION, &swapChainDesc, &swapchain, &dev, NULL, &devcon);
+		D3D11_SDK_VERSION, &swapChainDesc, &swapchain, &device, NULL, &deviceContext);
 
 	//Create our BackBuffer
 	ID3D11Texture2D* BackBuffer;
 	swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&BackBuffer);
 
 	//Create our Render Target
-	dev->CreateRenderTargetView(BackBuffer, NULL, &backbuffer);
+	if (BackBuffer != 0)
+	{
+		device->CreateRenderTargetView(BackBuffer, NULL, &backbuffer);
+	}
 	BackBuffer->Release();
 
 	//Describe our Depth/Stencil Buffer
@@ -114,11 +117,14 @@ bool Window::InitializeDirect3d11App(HINSTANCE hInstance)
 	depthStencilDesc.MiscFlags = 0;
 
 	//Create the Depth/Stencil View
-	dev->CreateTexture2D(&depthStencilDesc, NULL, &depthStencilBuffer);
-	dev->CreateDepthStencilView(depthStencilBuffer, NULL, &depthStencilView);
+	device->CreateTexture2D(&depthStencilDesc, NULL, &depthStencilBuffer);
+	if (depthStencilBuffer != 0)
+	{
+		device->CreateDepthStencilView(depthStencilBuffer, NULL, &depthStencilView);
+	}
 
 	//Set our Render Target
-	devcon->OMSetRenderTargets(1, &backbuffer, depthStencilView);
+	deviceContext->OMSetRenderTargets(1, &backbuffer, depthStencilView);
 
 	return true;
 }
@@ -126,8 +132,8 @@ void Window::CleanUp()
 {
 	//Release the COM Objects we created
 	swapchain->Release();
-	dev->Release();
-	devcon->Release();
+	device->Release();
+	deviceContext->Release();
 	backbuffer->Release();
 
 	game.GFX.CleanUp();
@@ -138,10 +144,10 @@ void Window::CleanUp()
 
 bool Window::InitScene()
 {
-	game.GFX.CreateShaders(hresult, dev, devcon);
-	game.CreateBuffer(hresult, dev, devcon, hwnd);
-	cube.CreateBuffer(hresult, dev);
-	cube.CreateTexture(hresult, dev, L"Image.jpg");
+	game.GFX.CreateShaders(hresult, device, deviceContext);
+	game.CreateBuffer(hresult, device, deviceContext, hwnd);
+	cube.CreateBuffer(hresult, device);
+	cube.CreateTexture(hresult, device, L"Image.jpg");
 	return true;
 }
 
@@ -157,11 +163,11 @@ void Window::DrawScene(double time)
 	//Clear our backbuffer to the updated color
 	const float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-	devcon->ClearRenderTargetView(backbuffer, bgColor);
-	devcon->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	deviceContext->ClearRenderTargetView(backbuffer, bgColor);
+	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	devcon->IASetIndexBuffer(game.GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	devcon->IASetVertexBuffers(0, 1, &game.GFX.vertexBuffer, &game.GFX.stride, &game.GFX.offset);
+	deviceContext->IASetIndexBuffer(game.GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->IASetVertexBuffers(0, 1, &game.GFX.vertexBuffer, &game.GFX.stride, &game.GFX.offset);
 
 	if (states == IN_GAME)
 	{
@@ -170,25 +176,25 @@ void Window::DrawScene(double time)
 	}
 	else if (states == IN_START_MENU)
 	{
-		startMenu.CreateBuffer(hresult, dev, L"StartMenuImage.jpg");
-		game.camera.camPos = camPosReset;
-		startMenu.DrawCube(devcon, 20,2,-20, game.camera.camView, game.camera.camProjection);
-		startMenu.UpdateBillboard(game.timer.frameTime, game.camera.camPos);
+		startMenu.CreateBuffer(hresult, device, L"StartMenuImage.jpg");
+		game.camera.cameraPos = camPosReset;
+		startMenu.DrawCube(deviceContext, 20,2,-20, game.camera.cameraView, game.camera.cameraProjection);
+		startMenu.UpdateBillboard(game.timer.frameTime, game.camera.cameraPos);
 	}
 	else if (states == IN_END_MENU)
 	{
-		endMenu.CreateBuffer(hresult, dev, L"ExitMenuImage.jpg");
-		game.camera.camPos = camPosReset;
+		endMenu.CreateBuffer(hresult, device, L"ExitMenuImage.jpg");
+		game.camera.cameraPos = camPosReset;
 
-		game.camera.camPosition = dx::XMVectorSet(game.camera.camPos.x, game.camera.camPos.y, game.camera.camPos.z, 0.0f);
-		game.camera.camTarget = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-		game.camera.camUp = dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+		game.camera.cameraPosition = dx::XMVectorSet(game.camera.cameraPos.x, game.camera.cameraPos.y, game.camera.cameraPos.z, 0.0f);
+		game.camera.cameraTarget = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		game.camera.cameraUpDir = dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 		//Set the View matrix
-		game.camera.camView = dx::XMMatrixLookAtLH(game.camera.camPosition, game.camera.camTarget, game.camera.camUp);
+		game.camera.cameraView = dx::XMMatrixLookAtLH(game.camera.cameraPosition, game.camera.cameraTarget, game.camera.cameraUpDir);
 
-		endMenu.DrawCube(devcon, 20, 2, -20, game.camera.camView, game.camera.camProjection);
-		endMenu.UpdateBillboard(game.timer.frameTime, game.camera.camPos);
+		endMenu.DrawCube(deviceContext, 20, 2, -20, game.camera.cameraView, game.camera.cameraProjection);
+		endMenu.UpdateBillboard(game.timer.frameTime, game.camera.cameraPos);
 	}
 
 	//Present the backbuffer to the screen
@@ -232,21 +238,21 @@ void Window::ReadMap()
 	}
 	for (int i = 0; i < index; i++)
 	{		
-		devcon->IASetIndexBuffer(game.GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		devcon->IASetVertexBuffers(0, 1, &game.GFX.vertexBuffer, &game.GFX.stride, &game.GFX.offset);
-		game.camera.DrawCube(devcon, wallPos[i].first * 4, 0, -wallPos[i].second * 4, i);
+		deviceContext->IASetIndexBuffer(game.GFX.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		deviceContext->IASetVertexBuffers(0, 1, &game.GFX.vertexBuffer, &game.GFX.stride, &game.GFX.offset);
+		game.camera.DrawCube(deviceContext, (float)wallPos[i].first * 4, 0, (float)-wallPos[i].second * 4, i);
 	}
 
 	if (test)
 	{
-		Pos = dx::XMFLOAT3(startPos.first * 4, 3.0f, -startPos.second * 4);
+		Pos = dx::XMFLOAT3((float)startPos.first * 4, 3.0f, (float)-startPos.second * 4);
 		dx::XMVECTOR PosVector;
 		PosVector = dx::XMLoadFloat3(&Pos);
-		game.camera.camPosition = PosVector;
+		game.camera.cameraPosition = PosVector;
 		test = false;
 	}
 
-	game.camera.DrawFloorCube(devcon, game.camera.floorCube.scale.x + 2, -5, -game.camera.floorCube.scale.z - 18, 0);
+	game.camera.DrawFloorCube(deviceContext, game.camera.floorCube.scale.x + 2, -5, -game.camera.floorCube.scale.z - 18, 0);
 
 	for (int e = 0; e < enemies; e++)
 	{
@@ -254,8 +260,8 @@ void Window::ReadMap()
 
 		if (game.billboard_.at(e).get()->active)
 		{		
-			game.billboard_.at(e).get()->CreateBuffer(hresult, dev, L"Image1.jpg");
-			game.billboard_.at(e).get()->DrawCube(devcon, enemyPos[e].first * 4, 3, -enemyPos[e].second * 4, game.camera.camView, game.camera.camProjection);
+			game.billboard_.at(e).get()->CreateBuffer(hresult, device, L"Image1.jpg");
+			game.billboard_.at(e).get()->DrawEnemy(deviceContext, (float)enemyPos[e].first * 4, 3, (float)-enemyPos[e].second * 4, game.camera.cameraView, game.camera.cameraProjection);
 		}
 	}
 }

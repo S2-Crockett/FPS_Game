@@ -1,5 +1,5 @@
 
-cbuffer cbPerObject
+cbuffer constantObjectBuffer
 {
     float4x4 WVP;
 };

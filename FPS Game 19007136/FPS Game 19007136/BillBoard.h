@@ -11,14 +11,14 @@ class BillBoard
 {
 public:
 
-	void DrawCube(ID3D11DeviceContext* devcon, float x, float y, float z, dx::XMMATRIX camView, dx::XMMATRIX camProjection);
+	void DrawEnemy(ID3D11DeviceContext* deviceContext, float x, float y, float z, dx::XMMATRIX cameraView, dx::XMMATRIX cameraProjection);
 
-	void UpdateBillboard(double time, dx::XMFLOAT3 camPos);
+	void UpdateEnemy(double time, dx::XMFLOAT3 camPos);
 
 	void CreateBuffer(HRESULT hresult, ID3D11Device* dev, const wchar_t* file);
 
-	ID3D11ShaderResourceView* CubesTexture;
-	ID3D11Resource* m_texture;
+	ID3D11ShaderResourceView* cubeTextureView;
+	ID3D11Resource* textureReasource;
 
 	ID3D11Buffer* cbPerObjectBuffer;
 
@@ -27,7 +27,7 @@ public:
 	dx::XMMATRIX Translation;
 
 	dx::XMMATRIX WVP;
-	dx::XMMATRIX cube1World;
+	dx::XMMATRIX cube;
 
 	dx::XMFLOAT3 pos;
 	dx::XMFLOAT3X3 rotation;

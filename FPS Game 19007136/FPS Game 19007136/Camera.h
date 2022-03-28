@@ -23,15 +23,14 @@ public:
 	static const int height = 20;
 	Cube cube[width * height];
 	Cube floorCube;
-	std::vector<std::unique_ptr<Cube>> bullet;
 	std::vector<std::unique_ptr<Bullet>> bullet_;
 
 	//void CleanUp();
-	void CreateBuffer(HRESULT hresult, ID3D11Device* dev);
+	void CreateBuffer(HRESULT hresult, ID3D11Device* device);
 
-	void DrawCube(ID3D11DeviceContext* devcon, float x, float y, float z, int index);
-	void DrawFloorCube(ID3D11DeviceContext* devcon, float x, float y, float z, int index);
-	void Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3D11Device* dev);
+	void DrawCube(ID3D11DeviceContext* deviceContext, float x, float y, float z, int index);
+	void DrawFloorCube(ID3D11DeviceContext* deviceContext, float x, float y, float z, int index);
+	void Shoot(ID3D11DeviceContext* deviceContext, double timer, HRESULT hresult, ID3D11Device* device);
 	void UpdateCamera(double time, dx::XMFLOAT3 pos_);
 
 	float y;
@@ -42,28 +41,26 @@ public:
 	void InitDirectInput(HINSTANCE hInstance, HRESULT hresult, HWND hwnd);
 	void DetectInput(double time, HWND hwnd);
 
-	dx::XMFLOAT3 camPos = { 30.0f, 3.0f, -30.0f };
+	dx::XMFLOAT3 cameraPos = { 30.0f, 3.0f, -30.0f };
 	dx::XMFLOAT3 scale = { 2.0f, 2.0f, 2.0f };
 	dx::XMFLOAT3 rotation;
 	dx::XMMATRIX rotation_;
-	dx::XMVECTOR camPosition;
+	dx::XMVECTOR cameraPosition;
 
 	bool collidedFront = false;
 	bool collidedBack = false;
 	bool collidedRight = false;
 	bool collidedLeft = false;
 
-	dx::XMMATRIX camView;
-	dx::XMMATRIX camProjection;
+	dx::XMMATRIX cameraView;
+	dx::XMMATRIX cameraProjection;
 
-	dx::XMVECTOR camTarget;
-	dx::XMVECTOR camUp;
+	dx::XMVECTOR cameraTarget;
+	dx::XMVECTOR cameraUpDir;
 
 private:
 
 	dx::XMMATRIX World;
-
-
 
 	dx::XMFLOAT3 camTarget_;
 
@@ -74,7 +71,6 @@ private:
 
 	const int Width = 800;
 	const int Height = 600;
-
 
 	dx::XMFLOAT3 result;
 };

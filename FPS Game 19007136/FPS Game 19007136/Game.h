@@ -10,29 +10,25 @@ using namespace std;
 class Game
 {
 public:
-
-
-
 	Timer timer;
 	Camera camera;
 	Graphics GFX;
 
-	ID3D11Device* dev;
-	ID3D11DeviceContext* devcon;
+	ID3D11Device* device;
+	ID3D11DeviceContext* deviceContext;
 	HRESULT hresult;
 	HWND hwnd = NULL;
 
 	void Update(int enemies, int& index, int state);
-	void UpdateStartMenuScene();
 	void UpdateScene();
 
 	void DrawScene();
-	void CreateBuffer(HRESULT& hresult, ID3D11Device*& dev, ID3D11DeviceContext*& devcon, HWND& hwnd);
+	void CreateBuffer(HRESULT& hresult, ID3D11Device*& device, ID3D11DeviceContext*& deviceContext, HWND& hwnd);
 
 	bool Collision(dx::XMFLOAT3 bullet, dx::XMFLOAT3 target);
 	void WallCollision(std::vector<bool>& collidedFront, bool& collided);
 
-	void Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3D11Device* dev);
+	void Shoot(ID3D11DeviceContext* devcon, double timer, HRESULT hresult, ID3D11Device* device);
 
 	std::vector<std::unique_ptr<BillBoard>> billboard_;
 

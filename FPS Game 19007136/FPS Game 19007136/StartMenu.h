@@ -19,22 +19,22 @@ class StartMenu
 
 		void UpdateBillboard(double time, dx::XMFLOAT3 camPos);
 
-		void CreateBuffer(HRESULT hresult, ID3D11Device* dev, const wchar_t* file);
+		void CreateBuffer(HRESULT hresult, ID3D11Device* device, const wchar_t* file);
 
 		void InitDirectInput(HINSTANCE hInstance, HRESULT hresult, HWND hwnd);
 		void DetectInput(double time, HWND hwnd);
 
 		ID3D11ShaderResourceView* CubesTexture;
-		ID3D11Resource* m_texture;
+		ID3D11Resource* textureResource;
 
-		ID3D11Buffer* cbPerObjectBuffer;
+		ID3D11Buffer* constantBuffer;
 
 		dx::XMMATRIX Rotation;
 		dx::XMMATRIX Scale;
 		dx::XMMATRIX Translation;
 
 		dx::XMMATRIX WVP;
-		dx::XMMATRIX cube1World;
+		dx::XMMATRIX image;
 
 		dx::XMFLOAT3 pos;
 		dx::XMFLOAT3X3 rotation;

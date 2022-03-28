@@ -10,23 +10,21 @@ namespace dx = DirectX;
 class Inputs
 {
 public:
-	IDirectInputDevice8* DIKeyboard;
-	IDirectInputDevice8* DIMouse;
+	IDirectInputDevice8* keyboardInputDevice;
+	IDirectInputDevice8* mouseInputDevice;
 
-	DIMOUSESTATE mouseLastState;
+	DIMOUSESTATE mousePreviousState;
 	LPDIRECTINPUT8 DirectInput;
 
-	dx::XMVECTOR DefaultForward = dx::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	dx::XMVECTOR DefaultRight = dx::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-	dx::XMVECTOR camForward = dx::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	dx::XMVECTOR camRight = dx::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	dx::XMVECTOR baseForward = dx::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	dx::XMVECTOR cameraForward = dx::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 
-	dx::XMMATRIX camRotationMatrix;
+	dx::XMMATRIX cameraRotationMatrix;
 	dx::XMMATRIX groundWorld;
 
-	dx::XMVECTOR moveBackForward = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	dx::XMVECTOR moveForward = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
-	float camYaw = 0.0f;
+	float cameraYaw = 0.0f;
 	float camPitch = 0.0f;
 
 	float rotx = 0;
