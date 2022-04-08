@@ -157,6 +157,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Inputs.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="StartMenu.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -188,6 +189,23 @@
     </Xml>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Map.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Images\Brick.JPG" />
+    <Image Include="Images\BulletImage.jpg" />
+    <Image Include="Images\ExitMenuImage.jpg" />
+    <Image Include="Images\Ground.jpg" />
+    <Image Include="Images\Image.jpg" />
+    <Image Include="Images\Image1.jpg" />
+    <Image Include="Images\Image2.jpg" />
+    <Image Include="Images\StartMenuImage.jpg" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="BillBoard.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Camera.h" />
@@ -195,22 +213,10 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Inputs.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="StartMenu.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Window.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Map.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Brick.JPG" />
-    <Image Include="Ground.jpg" />
-    <Image Include="Image.jpg" />
-    <Image Include="Image1.jpg" />
-    <Image Include="Image2.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

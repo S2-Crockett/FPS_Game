@@ -38,7 +38,7 @@ public:
 
 	dx::XMVECTOR position;
 
-	float rotation = 0.0f;
+	double rotation = 0.0f;
 	bool set = false;
 	bool active = false;
 

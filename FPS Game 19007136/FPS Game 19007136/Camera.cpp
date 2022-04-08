@@ -21,11 +21,11 @@ void Camera::CreateBuffer(HRESULT hresult, ID3D11Device* device)
 	}
 	for (int i = 0; i < width * height; i++)
 	{
-		cube[i].CreateTexture(hresult, device, L"Brick.jpg");
+		cube[i].CreateTexture(hresult, device, L"Images/Brick.jpg");
 	}
 
 	floorCube.CreateBuffer(hresult, device);
-	floorCube.CreateTexture(hresult, device, L"Ground.jpg");
+	floorCube.CreateTexture(hresult, device, L"Images/Ground.jpg");
 
 	//Camera information
 	cameraPosition = dx::XMVectorSet(cameraPos.x, cameraPos.y, cameraPos.z, 0.0f);

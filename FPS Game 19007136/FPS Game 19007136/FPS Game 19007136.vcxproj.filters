@@ -18,25 +18,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Cube.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Inputs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BillBoard.cpp">
@@ -48,7 +33,25 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Inputs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="StartMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -58,22 +61,51 @@
     </Xml>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Window.h">
+    <None Include="packages.config" />
+    <None Include="cpp.hint" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Map.txt">
+      <Filter>Images</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Images\Brick.JPG">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\BulletImage.jpg">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\ExitMenuImage.jpg">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\Ground.jpg">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\Image.jpg">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\Image1.jpg">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\Image2.jpg">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\StartMenuImage.jpg">
+      <Filter>Images</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Cube.h">
+    <ClInclude Include="StartMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Inputs.h">
+    <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BillBoard.h">
@@ -82,36 +114,20 @@
     <ClInclude Include="Bullet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StartMenu.h">
+    <ClInclude Include="Graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Image.jpg">
-      <Filter>Images</Filter>
-    </Image>
-    <Image Include="Image1.jpg">
-      <Filter>Images</Filter>
-    </Image>
-    <Image Include="Image2.jpg">
-      <Filter>Images</Filter>
-    </Image>
-    <Image Include="Brick.JPG">
-      <Filter>Images</Filter>
-    </Image>
-    <Image Include="Ground.jpg">
-      <Filter>Images</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Map.txt">
-      <Filter>Images</Filter>
-    </Text>
+    <ClInclude Include="Inputs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

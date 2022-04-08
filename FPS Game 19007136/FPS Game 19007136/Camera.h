@@ -33,7 +33,7 @@ public:
 	void Shoot(ID3D11DeviceContext* deviceContext, double timer, HRESULT hresult, ID3D11Device* device);
 	void UpdateCamera(double time, dx::XMFLOAT3 pos_);
 
-	float y;
+	float y = 0;
 
 	bool Intersecting(dx::XMFLOAT3 pos_, dx::XMFLOAT3 scale);
 	void Resolve(dx::XMFLOAT3 pos_, dx::XMFLOAT3 scale_, std::vector<bool> &_collided, std::vector<bool>& collidedBack_, std::vector<bool>& collidedLeft_, std::vector<bool>& collidedRight_, int index);

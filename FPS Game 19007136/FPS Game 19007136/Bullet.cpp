@@ -14,7 +14,7 @@ constantObjectBuffer _constantObjBuffer;
 void Bullet::Shoot(ID3D11DeviceContext* deviceContext, double timer, HRESULT hresult, ID3D11Device* device, Inputs input, dx::XMMATRIX cameraView, dx::XMMATRIX cameraProjection, dx::XMFLOAT3 rotation, dx::XMFLOAT3 cameraPosition, dx::XMVECTOR cameraTarget)
 {
 	bullet.CreateBuffer(hresult, device);
-	bullet.CreateTexture(hresult, device, L"Image.jpg");
+	bullet.CreateTexture(hresult, device, L"Images/BulletImage.jpg");
 
 	bullet.rotation = rotation.z * 3.157;
 	bullet.pos = cameraPosition;
@@ -33,6 +33,7 @@ void Bullet::Shoot(ID3D11DeviceContext* deviceContext, double timer, HRESULT hre
 
 void Bullet::DrawBullet(ID3D11DeviceContext* deviceContext, dx::XMMATRIX cameraView, dx::XMMATRIX cameraProjection)
 {
+	bullet.scale = dx::XMFLOAT3(.5,.75,.5);
 	bullet.DrawCube(deviceContext, bullet.pos.x, bullet.pos.y, bullet.pos.z, cameraView, cameraProjection);
 	bullet.pos.x = bullet.pos.x + bulletPos.x / 2;
 	bullet.pos.z = bullet.pos.z + bulletPos.z / 2;
@@ -40,4 +41,8 @@ void Bullet::DrawBullet(ID3D11DeviceContext* deviceContext, dx::XMMATRIX cameraV
 
 Bullet::Bullet()
 {
+	result = dx::XMFLOAT3(0, 0, 0);
+	bulletPos = dx::XMFLOAT3(0,0,0);
+	camProjection = dx::XMMATRIX();
+	camView = dx::XMMATRIX();
 }

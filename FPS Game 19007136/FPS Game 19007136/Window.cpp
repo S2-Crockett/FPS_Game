@@ -147,7 +147,7 @@ bool Window::InitScene()
 	game.GFX.CreateShaders(hresult, device, deviceContext);
 	game.CreateBuffer(hresult, device, deviceContext, hwnd);
 	cube.CreateBuffer(hresult, device);
-	cube.CreateTexture(hresult, device, L"Image.jpg");
+	cube.CreateTexture(hresult, device, L"Images/Image.jpg");
 	return true;
 }
 
@@ -176,14 +176,14 @@ void Window::DrawScene(double time)
 	}
 	else if (states == IN_START_MENU)
 	{
-		startMenu.CreateBuffer(hresult, device, L"StartMenuImage.jpg");
+		startMenu.CreateBuffer(hresult, device, L"Images/StartMenuImage.jpg");
 		game.camera.cameraPos = camPosReset;
 		startMenu.DrawCube(deviceContext, 20,2,-20, game.camera.cameraView, game.camera.cameraProjection);
 		startMenu.UpdateBillboard(game.timer.frameTime, game.camera.cameraPos);
 	}
 	else if (states == IN_END_MENU)
 	{
-		endMenu.CreateBuffer(hresult, device, L"ExitMenuImage.jpg");
+		endMenu.CreateBuffer(hresult, device, L"Images/ExitMenuImage.jpg");
 		game.camera.cameraPos = camPosReset;
 
 		game.camera.cameraPosition = dx::XMVectorSet(game.camera.cameraPos.x, game.camera.cameraPos.y, game.camera.cameraPos.z, 0.0f);
@@ -260,7 +260,7 @@ void Window::ReadMap()
 
 		if (game.billboard_.at(e).get()->active)
 		{		
-			game.billboard_.at(e).get()->CreateBuffer(hresult, device, L"Image1.jpg");
+			game.billboard_.at(e).get()->CreateBuffer(hresult, device, L"Images/Image1.jpg");
 			game.billboard_.at(e).get()->DrawEnemy(deviceContext, (float)enemyPos[e].first * 4, 3, (float)-enemyPos[e].second * 4, game.camera.cameraView, game.camera.cameraProjection);
 		}
 	}
@@ -303,9 +303,12 @@ int Window::messageloop() {
 			}
 			case IN_GAME:
 			{
-				if (game.enemiesDead == enemies)
+				if (enemies != 0)
 				{
-					states = IN_END_MENU;
+					if (game.enemiesDead == enemies)
+					{
+						states = IN_END_MENU;
+					}
 				}
 				break;
 			}

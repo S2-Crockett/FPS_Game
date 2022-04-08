@@ -19,8 +19,8 @@ public:
 		ID3D11DeviceContext* deviceContext);
 
 
-	const int Width = 800;
-	const int Height = 600;
+	const float Width = 800;
+	const float Height = 600;
 
 	ID3D11Buffer* vertexBuffer, * indexBuffer, * vertexBuffer_, * indexBuffer_;
 	UINT stride;

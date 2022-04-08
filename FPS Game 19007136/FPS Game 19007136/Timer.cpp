@@ -37,7 +37,7 @@ double Timer::GetFrameTime()
 	oldFrameTime = currentTime.QuadPart;
 
 	if (tickCount < 0.0f)
-		tickCount = 0.0f;
+		tickCount = (__int64)0.0f;
 
 	return float(tickCount) / countsPerSecond;
 }
